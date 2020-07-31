@@ -1,0 +1,38 @@
+
+table {
+	@cellSize: @sizeMedium - 1px;
+
+    border-spacing: 0;
+    border-collapse: collapse;
+	.width-full;
+	th,td {
+		.relative;
+		.padded;
+		.border;
+		line-height: @cellSize;
+		label {
+			.inline-block;
+		}
+	}
+	th {
+		min-width: 140px;
+		.no-wrap;
+	}
+	thead {
+		.theme-black;
+		.snow-text;
+    	.border;
+    	text-align: left;
+	}
+	tbody {
+		tr {
+			&:nth-of-type(odd) {
+				.theme-smoke-light;
+			}
+			td {
+				.no-wrap;
+				.trim;
+			}
+		}
+	}
+}

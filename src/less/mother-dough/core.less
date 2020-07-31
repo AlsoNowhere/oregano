@@ -1,0 +1,363 @@
+
+// Display
+.block {
+	display: block;
+}
+.inline-block {
+	display: inline-block;
+	vertical-align: top;
+}
+.flex {
+	display: flex;
+	flex-wrap: wrap;
+
+	&.space-between {
+		justify-content: space-between;
+	}
+	&.flex-end {
+		justify-content: flex-end;
+	}
+	&.stretch {
+		align-items: stretch;
+	}
+}
+.display-table {
+	display: table;
+}
+
+// Position
+.relative {
+	position: relative;
+}
+.absolute,.fixed {
+	&.pinned {
+		&.top {
+			top: 0;
+			&.gap {
+				top: @gap;
+			}
+			&.gap-large {
+				top: @sizeMedium;
+			}
+		}
+		&.bottom {
+			bottom: 0;
+			&.gap {
+				bottom: @gap;
+			}
+			&.gap-large {
+				bottom: @sizeMedium;
+			}
+		}
+		&.right {
+			right: 0;
+			&.gap {
+				right: @gap;
+			}
+			&.gap-large {
+				right: @sizeMedium;
+			}
+		}
+		&.right-gap {
+			right: @gap;
+		}
+		&.right-gap-large {
+			right: @sizeMedium;
+		}
+		&.left {
+			left: 0;
+			&.gap {
+				left: @gap;
+			}
+			&.gap-large {
+				left: @sizeMedium;
+			}
+		}
+		&.no-top {
+			top: initial;
+		}
+		&.no-bottom {
+			bottom: initial;
+		}
+		&.no-right {
+			right: initial;
+		}
+		&.no-left {
+			left: initial;
+		}
+	}
+}
+.absolute {
+	position: absolute;
+}
+.fixed {
+	position: fixed;
+}
+.z-index {
+	z-index: 1;
+}
+.middle {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+// Dimensions (width, height).
+.width-small {
+	width: @sizeSmall;
+}
+.width {
+	width: @sizeMedium;
+}
+.width-large {
+	width: @sizeLarge;
+}
+.width-full {
+	width: 100%;
+}
+.width-screen {
+	width: 100vw;
+}
+.height-small {
+	height: @sizeSmall;
+}
+.height {
+	height: @sizeMedium;
+}
+.height-large {
+	height: @sizeLarge;
+}
+.height-full {
+	height: 100%;
+}
+.height-screen {
+	height: 100vh;
+}
+.constrain {
+	max-width: @maxWidth;
+}
+.deconstrain {
+	max-width: initial;
+}
+
+// Margins
+.reset-margin {
+	margin: 0;
+}
+.margin-bottom-small {
+	margin-bottom: @gap;
+}
+.margin-bottom {
+	margin-bottom: @sizeMedium
+}
+.margin-bottom-large {
+	margin-bottom: @sizeLarge;
+}
+.margin-right-small {
+	margin-right: @gap;
+}
+.margin-right {
+	margin-right: @sizeMedium
+}
+.margin-right-large {
+	margin-right: @sizeLarge;
+}
+.margin-left-small {
+	margin-left: @gap;
+}
+.margin-left {
+	margin-left: @sizeMedium;
+}
+.margin-left-large {
+	margin-left: @sizeLarge;
+}
+.centred {
+	margin-left: auto;
+	margin-right: auto;
+}
+.push-right {
+	margin-right: 4px;
+}
+
+// Padding
+.reset-padding {
+	padding: 0;
+}
+
+.padding-small {
+	padding: @gap;
+}
+.padding {
+	padding: @sizeMedium;
+}
+.padding-large {
+	padding: @sizeLarge;
+}
+
+.padded-small {
+	padding: 0 @gap;
+}
+.padded {
+	padding: 0 @sizeMedium;
+}
+.padded-large {
+	padding: 0 @sizeLarge;
+}
+
+.padded-top-small {
+	padding-top: @gap;
+}
+.padded-top {
+	padding-top: @sizeMedium;
+}
+.padded-top-large {
+	padding-top: @sizeLarge;
+}
+
+.padded-right-small {
+	padding-right: @gap;
+}
+.padded-right {
+	padding-right: @sizeMedium;
+}
+.padded-right-large {
+	padding-right: @sizeLarge;
+}
+
+.padded-left-small {
+	padding-left: @gap;
+}
+.padded-left-large {
+	padding-left: @sizeLarge;
+}
+.padded-left {
+	padding-left: @sizeMedium;
+}
+
+.padded-bottom-small {
+	padding-bottom: @gap;
+}
+.padded-bottom {
+	padding-bottom: @sizeMedium;
+}
+.padded-bottom-large {
+	padding-bottom: @sizeLarge;
+}
+
+.padded-bowl-small {
+	padding: 0 @gap @gap;
+}
+.padded-bowl {
+	padding: 0 @sizeLarge @sizeMedium;
+}
+.padded-bowl-large {
+	padding: 0 @sizeLarge @sizeLarge;
+}
+
+.padded-bowl-reverse-small {
+	padding: @gap @gap 0;
+}
+.padded-bowl-reverse {
+	padding: @sizeLarge @sizeMedium 0;
+}
+.padded-bowl-reverse-large {
+	padding: @sizeLarge @sizeLarge 0;
+}
+
+// Borders
+.border {
+	border: 1px solid @smokeLight;
+}
+
+// Rounding
+.rounded {
+	border-radius: @rounding;
+}
+.sharp {
+	border-radius: 0;
+}
+.round {
+	border-radius: 50%;
+}
+
+// Shadow
+.shadow {
+	box-shadow: 2px 2px 2px @smoke;
+}
+.no-shadow {
+	box-shadow: none;
+}
+
+// Cursor
+.pointer {
+	cursor: pointer;
+}
+.not-allowed {
+	cursor: not-allowed;
+}
+
+// Animations
+.spin {
+	animation: 1s spin infinite linear;
+}
+.fade-in {
+	animation: @time fade-in forwards;
+}
+.fade-out {
+	animation: @time fade-out forwards;
+}
+
+// Overflow
+.overflow-x {
+	overflow-x: auto;
+}
+.overflow-y {
+	overflow-y: auto;
+}
+.trim {
+	overflow: hidden;
+}
+.trim-x {
+	overflow-x: hidden;
+}
+.trim-y {
+	overflow-y: hidden;
+}
+.visible {
+	overflow: visible;
+}
+
+// Other
+.hover {
+	&:hover {
+		background-color: lightgrey;
+	}
+	.transition;
+}
+.focus {
+	outline: none;
+	box-shadow: 0 0 3px 1px @focus;
+}
+.transition {
+	transition: 0.3s;
+}
+.no-select {
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+// Overwrites (last to be checked)
+.no-margin {
+	margin: 0;
+}
+.no-padding {
+	padding: 0;
+}
+.none {
+	&:not(.clear-none) {
+		display: none;
+	}
+}

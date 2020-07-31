@@ -1,0 +1,28 @@
+{
+    "name": "oregano-v2",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "start": "electron .",
+        "build:app": "electron-packager . --overwrite --icon=src/img/icon.png",
+        "build:js": "rollup --config",
+        "watch:js": "rollup --config --watch",
+        "build:less": "lessc ./src/less/init.less ./dist/styles.css"
+    },
+    "license": "ISC",
+    "devDependencies": {
+        "@rollup/plugin-commonjs": "^14.0.0",
+        "@rollup/plugin-node-resolve": "^7.1.1",
+        "dillx": "file:../../Dill/dill-x",
+        "electron": "^8.0.2",
+        "electron-packager": "^15.0.0",
+        "less": "^3.11.1",
+        "oregano-core": "file:../oregano-core",
+        "rollup": "^2.1.0",
+        "rollup-plugin-dillx": "file:../../_Tools/rollup-plugin-dillx",
+        "rollup-plugin-uglify": "^6.0.4",
+        "sage": "file:../../Sage",
+        "thyme-core": "file:../../Thyme/thyme-core"
+    }
+}
