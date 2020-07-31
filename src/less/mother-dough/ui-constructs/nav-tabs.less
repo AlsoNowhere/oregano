@@ -1,0 +1,41 @@
+
+ul.nav-tabs {
+	.relative;
+	li {
+		.relative;
+		.z-index;
+		.inline-block;
+		.padding;
+		.theme-snow;
+		border-right: 1px solid @snow;
+		border-left: 1px solid @snow;
+		border-top: 1px solid @snow;
+		border-bottom: 1px solid @smoke;
+		border-top-right-radius: @rounding;
+		border-top-left-radius: @rounding;
+		.pointer;
+		.transition;
+		.no-select;
+		&:hover {
+			.theme-smoke;
+		}
+		&.active {
+			.z-index;
+			border-right: 1px solid @smoke;
+			border-left: 1px solid @smoke;
+			border-top: 1px solid @smoke;
+			border-bottom: 1px solid @snow;
+		}
+	}
+	&:after {
+		content: "";
+		.absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		.border;
+	}
+	+ div {
+		margin-top: -1px;
+	}
+}

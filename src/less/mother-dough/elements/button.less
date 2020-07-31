@@ -1,0 +1,191 @@
+
+button, a.button {
+	.inline-block;
+	min-width: @buttonMinWidth;
+	.reset-padding;
+	.theme-blueberry;
+	.rounded;
+	box-shadow: @buttonShadow @blueberryDark;
+	border: none;
+	.snow-text;
+	line-height: @sizeMedium;
+	.text-centre;
+	.font-size;
+	.no-underline;
+	.pointer;
+	.transition;
+
+	&:hover {
+		background-color: @blueberryDark;
+	}
+
+	&:focus {
+		outline: none;
+		box-shadow: @buttonShadow @blueberryDark, 0 0 3px 1px @focus;
+	}
+
+	&.blueberry {
+		.theme-blueberry;
+		box-shadow: @buttonShadow @blueberryDark;
+
+		&:hover {
+			background-color: @blueberryDark;
+		}
+
+		&:focus {
+			outline: none;
+			box-shadow: @buttonShadow @blueberryDark, 0 0 3px 1px @focus;
+		}
+	}
+
+	&.apple {
+		.theme-apple;
+		box-shadow: @buttonShadow @appleDark;
+
+		&:hover {
+			background-color: @appleDark;
+		}
+
+		&:focus {
+			outline: none;
+			box-shadow: @buttonShadow @appleDark, 0 0 3px 1px @focus;
+		}
+	}
+
+	&.orange {
+		.theme-orange;
+		box-shadow: @buttonShadow @orangeDark;
+
+		&:hover {
+			background-color: @orangeDark;
+		}
+
+		&:focus {
+			outline: none;
+			box-shadow: @buttonShadow @orangeDark, 0 0 3px 1px @focus;
+		}
+	}
+
+	&.tomato {
+		.theme-tomato;
+		box-shadow: @buttonShadow @tomatoDark;
+
+		&:hover {
+			background-color: @tomatoDark;
+		}
+
+		&:focus {
+			outline: none;
+			box-shadow: @buttonShadow @tomatoDark, 0 0 3px 1px @focus;
+		}
+	}
+
+	&.smoke {
+		.theme-smoke;
+		box-shadow: @buttonShadow @smokeDark;
+
+		&:hover {
+			background-color: @smokeDark;
+		}
+
+		&:focus {
+			outline: none;
+			box-shadow: @buttonShadow @smokeDark, 0 0 3px 1px @focus;
+		}
+	}
+
+	&.snow {
+		.theme-snow;
+		box-shadow: @buttonShadow @snowDark;
+		.black-text;
+
+		&:hover {
+			background-color: @snowDark;
+		}
+
+		&:focus {
+			outline: none;
+			box-shadow: @buttonShadow @snowDark, 0 0 3px 1px @focus;
+		}
+
+		a {
+			.black-text;
+		}
+	}
+
+	&.empty {
+		background-color: transparent;
+		border: none;
+		box-shadow: none;
+		.black-text;
+
+		&:hover {
+			background-color: @focus;
+		}
+
+		&:focus {
+			outline: none;
+			box-shadow: 0 0 3px 1px @focus;
+		}
+
+		a {
+			.black-text;
+		}
+	}
+
+	&.square {
+		min-width: @sizeMedium;
+		.width;
+
+		&.small {
+			min-width: @sizeSmall;
+			.width-small;
+		}
+
+		&.large {
+			min-width: @sizeLarge;
+			.width-large;
+		}
+	}
+
+	&.small {
+		.line-height-small;
+	}
+
+	&.large {
+		min-width: @buttonMinWidth * 2;
+		.line-height-large;
+		font-size: @fontSizeLarge;
+	}
+
+	&[disabled] {
+		background-color: #a5a5a5;
+		box-shadow: none;
+		.black-text;
+	}
+}
+
+// Used to extend styles to other parts of the stylesheet.
+.button {
+	&.empty {
+		background-color: transparent;
+		border: none;
+		color: #000;
+		
+		&.text-white {
+			color: #fff;
+		}
+	}
+
+	&.light, &.edit, &.alter, &.delete, &.cancel, &.empty {
+		&:hover {
+			background-color: @focus;
+		}
+	}
+
+	&.large {
+		min-width: @buttonMinWidth * 2;
+		.line-height-large;
+		font-size: @fontSizeLarge;
+	}
+}
