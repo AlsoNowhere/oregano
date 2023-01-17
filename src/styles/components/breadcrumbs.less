@@ -1,0 +1,19 @@
+.breadcrumbs {
+  .list;
+  display: flex;
+
+  &__item {
+    height: 2rem;
+    .padded;
+    line-height: 2rem;
+
+    &:first-child {
+      padding-left: 0;
+    }
+
+    &-link {
+      color: @blueberry;
+      cursor: pointer;
+    }
+  }
+}

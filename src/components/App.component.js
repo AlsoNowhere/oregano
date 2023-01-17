@@ -1,54 +1,96 @@
-
-import { dillx } from "dillx";
-
-import { path } from "thyme-core";
-
-import { getData2, getItemFromPath } from "oregano-core";
+import { component, element } from "mint";
 
 import { Header } from "./structure/Header.component";
-import { ListPage } from "./pages/ListPage.component";
-import { ManageItemPage } from "./pages/ManageItemPage.component";
-import { ExportPage } from "./pages/ExportPage.component";
-import { ImportPage } from "./pages/ImportPage.component";
+import { List } from "./structure/pages/List.component";
+import { Manage } from "./structure/pages/ManagePage.component";
+import { ExportData } from "./structure/pages/ExportData.component";
 
-import { stateStore } from "../stores/state.store";
+import { appInit } from "../services/app-init.service";
 
-import { key } from "../data/constants.data";
-import { TreePage } from "./pages/TreePage.component";
-// import { mainButtonOptions } from "../data/main-button-options.data";
+import { appStore } from "../stores/app.store";
+import { ImportData } from "./structure/pages/ImportData.component";
+import { TreeView } from "./structure/pages/TreeView.component";
 
-export const App = function(){
+// import { path } from "thyme-core";
+// import { Router } from "thyme";
 
-    this.root = getData2(key);
-    this.currentItem = getItemFromPath(this.root, path.path);
-    this.currentList = function(){
-        return this.currentItem.list;
-    }
-    this.currentTitle = function(){
-        return this.currentItem.title;
-    }
+// import { Header } from "./structure/Header.component";
 
-    this.back = function(){
-        stateStore.state = "list";
-    }
+// import { loadData, saveData } from "../services/loadSaveData.service";
 
-    // this.mainButtonOptions = mainButtonOptions;
+// import { routes } from "../data/routes.data";
 
-    this.mainbuttonselement = null;
+// export const App = function(){
 
-    this.edititem = null;
-    this.editindex = null;
+//     this.manageFormElement = null;
+//     this.mainButtonsElement = null;
+//     this.rootData = null;
+//     this.routes = routes;
+//     this.currentItem = null;
+//     this.currentList = dill.get(function(){
+//         return this.currentItem?.list;
+//     });
+//     this.currentTitle = dill.get(function(){
+//         return this.currentItem?.title;
+//     });
+//     this.appScope = null;
+//     this.editItem = null;
+//     this.saveData = data => saveData(data);
 
-    return dillx(
-        <>
-            <Header />
-            <main>
-                <ListPage dill-if={stateStore.state === "list"} />
-                <ManageItemPage edititem="edititem" editindex="editindex" dill-if={stateStore.state === "manage"} />
-                <ExportPage dill-if={stateStore.state === "export"} />
-                <ImportPage dill-if={stateStore.state === "import"} />
-                <TreePage dill-if={stateStore.state === "tree-view"} />
-            </main>
-        </>
-    );
-}
+//     this.on_init = async function(){
+//         this.appScope = this;
+//         this.rootData = await loadData(this, "rootData");
+
+//         // console.log("Loaded data: ", this.rootData);
+
+//         this.currentItem = this.rootData;
+//         if (path.path[0] !== "list") {
+//             path.path = ["list"];
+//         }
+//         path.path.slice(1).forEach(x => {
+//             this.currentItem = this.currentItem.list[x];
+//         });
+//         dill.change(this);
+//     }
+
+//     return dill(
+//         <>
+//             <Header />
+
+//             <main class="padded-top-large">
+//                 <Router />
+//             </main>
+//         </>
+//     );
+// }
+
+export const App = component(
+  "main",
+  function () {
+    appStore.connect(this);
+
+    this.oninsert = function () {
+      appInit();
+
+      //     this.rootData = await loadData(this, "rootData");
+      //     this.currentItem = this.rootData;
+      //     if (path.path[0] !== "list") {
+      //         path.path = ["list"];
+      //     }
+      //     path.path.slice(1).forEach(x => {
+      //         this.currentItem = this.currentItem.list[x];
+      //     });
+    };
+  },
+  null,
+  [
+    element(Header),
+    element("div", { class: "pages" }, [
+      element(List, { "m-if": "showList" }),
+      element(Manage, { "m-if": "showManage" }),
+      element(ExportData, { "m-if": "showExport" }),
+      element(ImportData, { "m-if": "showImport" }),
+      element(TreeView, { "m-if": "showTree" }),
+    ]),
+  ]
+);

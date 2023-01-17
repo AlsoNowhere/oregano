@@ -1,9 +1,11 @@
+import { refresh } from "mint";
 
-import { path } from "thyme-core";
+import { path } from "./path.service";
 
-import { getItemFromPath } from "oregano-core";
+import { listStore } from "../stores/list.store";
 
-export const upToRoot = function(){
-    path.path = [];
-    this.currentItem = getItemFromPath(this.root, path.path);
-}
+export const upToRoot = () => {
+  path.set(path.get().slice(0, 1));
+  listStore.depthIndexing = [];
+  refresh(listStore);
+};
