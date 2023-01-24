@@ -1,10 +1,5 @@
-
-import { dillx } from "dillx";
+import { element, app } from "mint";
 
 import { App } from "./components/App.component";
 
-const Data = function(){};
-
-dillx.create(document.body,Data,dillx(
-    <App />
-));
+app(document.body, {}, [element(App)]);

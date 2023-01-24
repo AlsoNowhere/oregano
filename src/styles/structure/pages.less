@@ -1,0 +1,59 @@
+.pages {
+  padding-top: @sizeLarge + 2rem;
+}
+
+.list-page {
+  width: @pageWidth;
+  .centred;
+
+  &__container {
+    .margin-bottom;
+    .rounding;
+    .shadow;
+  }
+
+  &__item {
+    position: relative;
+    border-right: 1px solid @black;
+    border-left: 1px solid @black;
+    line-height: 2rem;
+    overflow: hidden;
+
+    &:first-child {
+      border-top: 1px solid @black;
+      border-top-left-radius: @rounding;
+      border-top-right-radius: @rounding;
+    }
+
+    &:last-child {
+      border-bottom: 1px solid @black;
+      border-bottom-left-radius: @rounding;
+      border-bottom-right-radius: @rounding;
+    }
+
+    &-title {
+      .flew-grow;
+      .padding;
+      .pointer;
+      .hover;
+
+      &:hover {
+        color: @black;
+      }
+
+      &-p {
+        margin: 0;
+      }
+    }
+
+    &-container {
+      .flex;
+      .space-between;
+    }
+  }
+
+  &__item-options {
+    .list;
+    .flex;
+  }
+}

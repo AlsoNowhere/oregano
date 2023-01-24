@@ -1,0 +1,45 @@
+.header {
+  position: fixed;
+  z-index: 1;
+  .pinned;
+  .flex;
+  .space-between;
+  width: 100%;
+  .blueberry-bg;
+  .shadow;
+  -webkit-app-region: drag;
+
+  h1 {
+    .no-margin;
+    .padded-medium;
+    .snow-text;
+    line-height: @sizeLarge;
+  }
+
+  button {
+    position: relative;
+    z-index: 1;
+    -webkit-app-region: no-drag;
+
+    span {
+      border-bottom: 2px solid @white;
+    }
+
+    svg line {
+      stroke: @white;
+      stroke-width: 2;
+    }
+
+    &.empty {
+      &:hover {
+        span {
+          border-bottom-color: @black;
+        }
+
+        svg line {
+          stroke: @black;
+        }
+      }
+    }
+  }
+}

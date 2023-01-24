@@ -1,54 +1,34 @@
-
-import { dillx } from "dillx";
-
-import { path } from "thyme-core";
-
-import { getData2, getItemFromPath } from "oregano-core";
+import { component, element } from "mint";
 
 import { Header } from "./structure/Header.component";
-import { ListPage } from "./pages/ListPage.component";
-import { ManageItemPage } from "./pages/ManageItemPage.component";
-import { ExportPage } from "./pages/ExportPage.component";
-import { ImportPage } from "./pages/ImportPage.component";
+import { List } from "./structure/pages/List.component";
+import { Manage } from "./structure/pages/ManagePage.component";
+import { ExportData } from "./structure/pages/ExportData.component";
+import { ImportData } from "./structure/pages/ImportData.component";
+import { TreeView } from "./structure/pages/TreeView.component";
 
-import { stateStore } from "../stores/state.store";
+import { appInit } from "../services/app-init.service";
 
-import { key } from "../data/constants.data";
-import { TreePage } from "./pages/TreePage.component";
-// import { mainButtonOptions } from "../data/main-button-options.data";
+import { appStore } from "../stores/app.store";
 
-export const App = function(){
+export const App = component(
+  "main",
+  function () {
+    appStore.connect(this);
 
-    this.root = getData2(key);
-    this.currentItem = getItemFromPath(this.root, path.path);
-    this.currentList = function(){
-        return this.currentItem.list;
-    }
-    this.currentTitle = function(){
-        return this.currentItem.title;
-    }
-
-    this.back = function(){
-        stateStore.state = "list";
-    }
-
-    // this.mainButtonOptions = mainButtonOptions;
-
-    this.mainbuttonselement = null;
-
-    this.edititem = null;
-    this.editindex = null;
-
-    return dillx(
-        <>
-            <Header />
-            <main>
-                <ListPage dill-if={stateStore.state === "list"} />
-                <ManageItemPage edititem="edititem" editindex="editindex" dill-if={stateStore.state === "manage"} />
-                <ExportPage dill-if={stateStore.state === "export"} />
-                <ImportPage dill-if={stateStore.state === "import"} />
-                <TreePage dill-if={stateStore.state === "tree-view"} />
-            </main>
-        </>
-    );
-}
+    this.oninsert = function () {
+      appInit();
+    };
+  },
+  null,
+  [
+    element(Header),
+    element("div", { class: "pages" }, [
+      element(List, { "m-if": "showList" }),
+      element(Manage, { "m-if": "showManage" }),
+      element(ExportData, { "m-if": "showExport" }),
+      element(ImportData, { "m-if": "showImport" }),
+      element(TreeView, { "m-if": "showTree" }),
+    ]),
+  ]
+);
