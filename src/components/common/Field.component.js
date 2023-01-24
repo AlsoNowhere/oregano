@@ -16,6 +16,10 @@ export const Field = component(
     this.onInput = null;
     this.fieldStyles = "";
 
+    getter(this, "hasLabel", function () {
+      return !!this.label;
+    });
+
     getter(this, "isInput", function () {
       return this.type !== "textarea" && this.type !== "select";
     });
@@ -26,11 +30,16 @@ export const Field = component(
   },
   {},
   [
+    element("span", { "m-if": "hasLabel" }, "{label}"),
+
     element("input", {
       "m-if": "isInput",
+      "[type]": "type",
+      "[checked]": "checked",
       ...commonProps,
       "[style]": "fieldStyles",
     }),
+
     element("textarea", {
       "m-if": "isTextArea",
       ...commonProps,

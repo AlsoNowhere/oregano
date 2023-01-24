@@ -33,16 +33,12 @@ export const undo = () => {
   }
   if (undoItem.type === "delete") {
     const pathItem = getItem(undoItem.path);
-    console.log("Path un: ", pathItem, undoItem);
     if (pathItem === undefined) return;
     pathItem.items.push(undoItem.item);
   }
   if (undoItem.type === "paste") {
     const pathItem = getItem(undoItem.path);
     if (pathItem === undefined) return;
-
-    console.log("Path: ", pathItem, undoItem.items);
-
     undoItem.items.forEach(({ index }) => {
       const undoIndex = pathItem.items.findIndex((x) => x.index === index);
       if (undoIndex === -1) return;

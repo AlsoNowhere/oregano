@@ -31,7 +31,6 @@ export const Breadcrumbs = component(
     this.goToLink = function () {
       const url = path.get();
       const index = this._i / 2;
-      console.log("Load:", index, this);
       path.set(url.slice(0, index + 1));
       refresh(listStore);
     };

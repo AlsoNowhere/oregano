@@ -1,20 +1,27 @@
-import { Store } from "mint";
+import { Resolver, Store } from "mint";
 
 import { wait } from "../services/wait.service";
 import { backToList } from "../services/back-to-list.service";
 import { saveData } from "../services/load-save.service";
 
+import { path } from "../services/path.service";
+
 import { listStore } from "./list.store";
 import { mainButtonsStore } from "./main-buttons.store";
+import { appStore } from "./app.store";
 
 import { Item } from "../models/Item.model";
-import { appStore } from "./app.store";
 import { UndoConfig } from "../models/UndoConfig.model";
-import { path } from "../services/path.service";
+
+import { colours } from "../data/colours.data";
+
+const colour = colours[0].colour;
 
 export const manageStore = new Store({
   title: "",
   message: "",
+  colours,
+  currentColour: colour,
 
   setTitle(_, element) {
     manageStore.title = element.value;
@@ -23,17 +30,27 @@ export const manageStore = new Store({
     manageStore.message = element.value;
   },
 
+  setColour(_, element) {
+    manageStore.currentColour = element.value;
+  },
+
+  isChecked: new Resolver(function () {
+    return false;
+  }),
+
   editItem: null,
 
   onSubmit(event) {
     event.preventDefault();
-    const { title, message } = manageStore;
+
+    const { title, message, currentColour } = manageStore;
     if (manageStore.editItem !== null) {
       manageStore.editItem.title = title;
       manageStore.editItem.message = message;
+      manageStore.editItem.colour = currentColour;
       manageStore.editItem = null;
     } else {
-      const newItem = new Item(title, message);
+      const newItem = new Item(title, message, currentColour);
       listStore.list.push(newItem);
       appStore.rootData.undoItems.unshift(
         new UndoConfig("add", { item: newItem, path: path.get().slice(1) })
@@ -49,41 +66,6 @@ export const manageStore = new Store({
       const [button] = first.children;
       button?.focus?.();
     })();
-
-    //     const { title, message, itemColour: colour } = this;
-    //     const newItem = { title, message, colour, list: this.editItem !== null ? this.editItem.list : [] };
-    //     const oldItem = Object.assign({}, this.editItem);
-    //     this.editItem !== null
-    //         ? Object.assign(this.editItem, newItem)
-    //         : this.currentList.push(newItem);
-    //     {
-    //         const { currentList, editItem, saveData, rootData } = this;
-    //         undo.action = this.editItem !== null
-    //             ? () => {
-    //                 Object.assign(editItem, oldItem);
-    //                 saveData(rootData);
-    //             }
-    //             : () => {
-    //                 currentList.splice(currentList.indexOf(newItem), 1);
-    //                 saveData(rootData);
-    //             }
-    //     }
-    //     this.editItem = null;
-    //     this.saveData(this.rootData);
-    //     this.cancel();
-    //     this.mainButtonsElement && (function(){
-    //         let i = 0,
-    //             l = this.mainButtonsElement.children.length;
-    //         while (i < l) {
-    //             const listItem = this.mainButtonsElement.children[i];
-    //             const [button] = listItem.children;
-    //             if (button.name === "Add") {
-    //                 button.focus();
-    //                 break;
-    //             }
-    //             i++;
-    //         }
-    //     }.apply(this));
   },
 
   cancel() {

@@ -9,15 +9,6 @@ import { manageStore } from "./manage.store";
 
 import { UndoConfig } from "../models/UndoConfig.model";
 
-// const getItem = (url, item = appStore.rootData) => {
-//   if (item === null) return null;
-//   if (url.length === 0) return item;
-//   const nextIndex = url.at(0);
-//   if (nextIndex === "" || nextIndex === undefined) return item;
-//   const nextItem = item.items[nextIndex];
-//   return getItem(url.slice(1), nextItem);
-// };
-
 export const listStore = new Store({
   depthIndexing: [],
 
@@ -39,11 +30,24 @@ export const listStore = new Store({
     return item.message;
   }),
 
+  getColour: new Resolver(function (a, b) {
+    return "white";
+  }),
+
   list: new Resolver(() => {
     const item = getItem(path.get().slice(1));
     if (item === null) return [];
     return item.items;
   }),
+
+  items: new Resolver(() =>
+    listStore.list.map(({ index, title, message, colour }) => ({
+      index,
+      title,
+      colour: colour || "white",
+      hasMessage: !!message,
+    }))
+  ),
 
   selectItem() {
     const nextIndex = this._i + "";

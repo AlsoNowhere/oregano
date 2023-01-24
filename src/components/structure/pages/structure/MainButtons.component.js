@@ -26,6 +26,7 @@ export const MainButtons = component(
         class: "square large margin-right font-size-large {theme}",
         "[icon]": "icon",
         "[theme]": "theme",
+        "[title]": "title",
         "[disabled]": "disabled",
         "[extraButtonLabel]": "extraButtonLabel",
         "[onClick]": "onClick",

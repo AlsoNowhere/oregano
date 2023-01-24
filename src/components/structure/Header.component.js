@@ -3,10 +3,8 @@ import { component, element } from "mint";
 import { version } from "../../data/constants.data";
 
 const lineProps = {
-  y1: "20",
-  y2: "80",
-  stroke: "#fff",
-  "stroke-width": "2",
+  y1: "4",
+  y2: "28",
 };
 
 export const Header = component(
@@ -31,13 +29,9 @@ export const Header = component(
           type: "button",
           class: "empty square large snow-text font-size-large",
         },
-        element(
-          "span",
-          {
-            style: "-webkit-app-region: no-drag",
-          },
-          "_"
-        )
+        element("span", {
+          class: "block absolute middle width-small height",
+        })
       ),
       element(
         "button",
@@ -48,17 +42,17 @@ export const Header = component(
         element(
           "svg",
           {
-            viewBox: "0 0 100 100",
+            viewBox: "0 0 32 32",
           },
           [
             element("line", {
-              x1: "20",
-              x2: "80",
+              x1: "4",
+              x2: "28",
               ...lineProps,
             }),
             element("line", {
-              x1: "80",
-              x2: "20",
+              x1: "28",
+              x2: "4",
               ...lineProps,
             }),
           ]

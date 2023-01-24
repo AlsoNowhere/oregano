@@ -1,4 +1,4 @@
-import { app, refresh } from "mint";
+import { refresh } from "mint";
 
 import { path } from "../services/path.service";
 import { upOneLevel } from "../services/up-one-level.service";
@@ -10,27 +10,25 @@ import { upToRoot } from "../services/up-to-root.service";
 import { pasteItems } from "../services/paste-items.service";
 import { undo } from "../services/undo.service";
 
-// import { upToRoot } from "../services/main-buttons/up-to-root.service";
-// import { pasteItems } from "../services/main-buttons/paste-items.service";
+import { saveToFile } from "../services/saveToFile.service";
 
-// import { undo } from "./undo-list.data";
-// import { dill } from "dill-framework";
+import { appStore } from "../stores/app.store";
+import { manageStore } from "../stores/manage.store";
+import { listStore } from "../stores/list.store";
+
+import { MainButton } from "../models/MainButton.model";
 
 export const mainButtons = [
   new MainButton("Add", "Add item", "plus", "blueberry", function () {
     path.set(["manage", ...path.get().slice(1)]);
-    // setTimeout(() => {
-    //     this.manageFormElement?.title.focus();
-    // }, 0);
     refresh(appStore);
   }),
-  // new MainButton("Edit this item", "Edit this item", "pencil", "apple", function(){
-  //     this.editItem = this.currentItem;
-  //     path.path = ["manage", ...path.path.slice(1)];
-  //     setTimeout(() => {
-  //         this.manageFormElement?.title.focus();
-  //     }, 0);
-  // }),
+  new MainButton("Edit", "Edit this item", "pencil", "apple", function () {
+    manageStore.editItem = listStore.currentItem;
+    path.set(["manage", ...path.get().slice(1)]);
+    refresh(appStore);
+  }),
+
   new MainButton("Undo", "Undo", "undo", "snow", undo, {
     disabled: () => appStore.rootData?.undoItems.length === 0,
   }),
@@ -61,4 +59,12 @@ export const mainButtons = [
       return length || "";
     },
   }),
+
+  new MainButton(
+    "Save",
+    "Save data to file",
+    "floppy-o",
+    "blueberry",
+    saveToFile
+  ),
 ];

@@ -10,6 +10,7 @@ export const Button = component(
     this.disabled = false;
     this.extraButtonLabel = null;
     this.onClick = null;
+    this.title = undefined;
 
     getter(this, "hasIcon", function () {
       return this.icon !== null;
@@ -32,6 +33,7 @@ export const Button = component(
   {
     "[type]": "type",
     class: "{class}",
+    "[title]": "title",
     "[disabled]": "disabled",
     "(click)": "onClick",
   },

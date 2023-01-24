@@ -14,4 +14,7 @@ export const appInit = async () => {
   loadData();
   await wait();
   refresh(appStore);
+  window.dispatchEvent(
+    new CustomEvent("initial-data-save", { detail: appStore.rootData })
+  );
 };

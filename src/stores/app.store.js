@@ -3,10 +3,7 @@ import { Resolver, Store } from "mint";
 import { path } from "../services/path.service";
 
 export const appStore = new Store({
-  // manageFormElement: null,
-  // mainButtonsElement: null,
   rootData: null,
-  // routes,
   currentItem: null,
 
   currentList: new Resolver(function () {
@@ -40,10 +37,4 @@ export const appStore = new Store({
     const [url] = path.get();
     return url === "tree-view";
   }),
-
-  // this.appScope = null;
-  // this.editItem = null;
-  // this.saveData = data => saveData(data);
-
-  // saveData,
 });
