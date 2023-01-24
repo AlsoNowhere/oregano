@@ -3,6 +3,7 @@ import { Resolver, Store } from "mint";
 import { wait } from "../services/wait.service";
 import { backToList } from "../services/back-to-list.service";
 import { saveData } from "../services/load-save.service";
+
 import { path } from "../services/path.service";
 
 import { listStore } from "./list.store";
@@ -28,6 +29,7 @@ export const manageStore = new Store({
   setMessage(_, element) {
     manageStore.message = element.value;
   },
+
   setColour(_, element) {
     manageStore.currentColour = element.value;
   },
@@ -40,6 +42,7 @@ export const manageStore = new Store({
 
   onSubmit(event) {
     event.preventDefault();
+
     const { title, message, currentColour } = manageStore;
     if (manageStore.editItem !== null) {
       manageStore.editItem.title = title;
