@@ -1,11 +1,12 @@
 import { component, element } from "mint";
 
 import { Header } from "./structure/Header.component";
-import { List } from "./structure/pages/List.component";
-import { Manage } from "./structure/pages/ManagePage.component";
-import { ExportData } from "./structure/pages/ExportData.component";
-import { ImportData } from "./structure/pages/ImportData.component";
-import { TreeView } from "./structure/pages/TreeView.component";
+
+import { List } from "./pages/List.component";
+import { Manage } from "./pages/ManagePage.component";
+import { ExportData } from "./pages/ExportData.component";
+import { ImportData } from "./pages/ImportData.component";
+import { TreeView } from "./pages/TreeView.component";
 
 import { appInit } from "../services/app-init.service";
 

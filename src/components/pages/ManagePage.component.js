@@ -1,13 +1,13 @@
 import { component, element, refresh } from "mint";
 
-import { Button } from "../../common/Button.component";
-import { Field } from "../../common/Field.component";
+import { Button } from "../common/Button.component";
+import { Field } from "../common/Field.component";
 
-import { wait } from "../../../services/wait.service";
+import { wait } from "../../services/wait.service";
 
-import { manageStore } from "../../../stores/manage.store";
+import { manageStore } from "../../stores/manage.store";
 
-import { colours } from "../../../data/colours.data";
+import { colours } from "../../data/colours.data";
 
 export const Manage = component(
   "section",

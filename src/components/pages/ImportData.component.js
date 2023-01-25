@@ -1,15 +1,25 @@
 import { component, element } from "mint";
 
-import { AltButtons } from "./structure/AltButtons.component";
-import { Field } from "../../common/Field.component";
-import { Button } from "../../common/Button.component";
+import { Field } from "../common/Field.component";
+import { Button } from "../common/Button.component";
 
-import { importStore } from "../../../stores/import.store";
+import { AltButtons } from "../additions/AltButtons.component";
+
+import { importStore } from "../../stores/import.store";
+import { wait } from "../../services/wait.service";
 
 export const ImportData = component(
   "div",
   function () {
     importStore.connect(this);
+
+    this.oneach = function () {
+      importStore.importValue = "";
+      (async () => {
+        await wait();
+        this.importFormElement?.["importValue"]?.focus();
+      })();
+    };
   },
   null,
   [

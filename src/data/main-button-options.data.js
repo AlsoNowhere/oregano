@@ -2,14 +2,9 @@ import { refresh } from "mint";
 
 import { path } from "../services/path.service";
 import { upOneLevel } from "../services/up-one-level.service";
-
-import { appStore } from "../stores/app.store";
-
-import { MainButton } from "../models/MainButton.model";
 import { upToRoot } from "../services/up-to-root.service";
 import { pasteItems } from "../services/paste-items.service";
 import { undo } from "../services/undo.service";
-
 import { saveToFile } from "../services/saveToFile.service";
 
 import { appStore } from "../stores/app.store";
@@ -28,7 +23,6 @@ export const mainButtons = [
     path.set(["manage", ...path.get().slice(1)]);
     refresh(appStore);
   }),
-
   new MainButton("Undo", "Undo", "undo", "snow", undo, {
     disabled: () => appStore.rootData?.undoItems.length === 0,
   }),
@@ -59,7 +53,6 @@ export const mainButtons = [
       return length || "";
     },
   }),
-
   new MainButton(
     "Save",
     "Save data to file",

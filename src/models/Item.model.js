@@ -1,6 +1,12 @@
 import { appStore } from "../stores/app.store";
 
-export const Item = function (title, message = "", colour = colours[0].colour) {
+import { colours } from "../data/colours.data";
+
+export const Item = function (
+  title = "",
+  message = "",
+  colour = colours[0].colour
+) {
   this.title = title;
   this.message = message;
   this.colour = colour;

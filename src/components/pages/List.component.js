@@ -1,12 +1,13 @@
 import { component, element, getter } from "mint";
 
-import { MainButtons } from "./structure/MainButtons.component";
-import { Button } from "../../common/Button.component";
+import { Button } from "../common/Button.component";
 
-import { listStore } from "../../../stores/list.store";
-import { Breadcrumbs } from "./structure/Breadcrumbs.component";
+import { MainButtons } from "../additions/MainButtons.component";
+import { Breadcrumbs } from "../additions/Breadcrumbs.component";
 
-import { colours } from "../../../data/colours.data";
+import { listStore } from "../../stores/list.store";
+
+import { colours } from "../../data/colours.data";
 
 export const List = component(
   "div",
