@@ -1,9 +1,9 @@
 import { component, element, getter, refresh } from "mint";
 
-import { path } from "../../../../services/path.service";
+import { path } from "../../services/path.service";
 
-import { appStore } from "../../../../stores/app.store";
-import { listStore } from "../../../../stores/list.store";
+import { appStore } from "../../stores/app.store";
+import { listStore } from "../../stores/list.store";
 
 export const Breadcrumbs = component(
   "ul",

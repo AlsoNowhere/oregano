@@ -1,5 +1,6 @@
 import { component, element } from "mint";
-import { backToList } from "../../../../services/back-to-list.service";
+
+import { backToList } from "../../services/back-to-list.service";
 
 export const AltButtons = component(
   "section",
