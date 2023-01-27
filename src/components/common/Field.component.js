@@ -1,8 +1,9 @@
-import { component, element, getter } from "mint";
+import { component, element, getter, template, MintElement } from "mint";
 
 const commonProps = {
   class: "large",
   "[name]": "name",
+  "[class]": "class",
   "[value]": "value",
   "[required]": "required",
   "(input)": "onInput",
@@ -14,10 +15,15 @@ export const Field = component(
     this.type = "text";
     this.required = false;
     this.onInput = null;
+    this.class = "";
     this.fieldStyles = "";
 
     getter(this, "hasLabel", function () {
-      return !!this.label;
+      return !!this.label && !this.isLabelMintElement;
+    });
+
+    getter(this, "isLabelMintElement", function () {
+      return this.label instanceof MintElement;
     });
 
     getter(this, "isInput", function () {
@@ -31,6 +37,7 @@ export const Field = component(
   {},
   [
     element("span", { "m-if": "hasLabel" }, "{label}"),
+    element("div", { "m-if": "isLabelMintElement" }, template("label")),
 
     element("input", {
       "m-if": "isInput",

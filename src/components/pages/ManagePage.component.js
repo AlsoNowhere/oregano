@@ -1,4 +1,4 @@
-import { component, element, refresh } from "mint";
+import { component, element, getter, refresh } from "mint";
 
 import { Button } from "../common/Button.component";
 import { Field } from "../common/Field.component";
@@ -19,20 +19,58 @@ export const Manage = component(
     this.oneach = async function () {
       const isEdit = manageStore.editItem !== null;
       if (isEdit) {
+        const message = manageStore.editItem.message;
         manageStore.title = manageStore.editItem.title;
-        manageStore.message = manageStore.editItem.message;
+        manageStore.message =
+          message instanceof Array ? message.join("\n==b\n") : message;
+        manageStore.styleButtons.forEach((styleButton) => {
+          styleButton.active = false;
+          styleButton.theme = "snow";
+        });
+        (manageStore.editItem.styles || []).forEach((_style) => {
+          const styleButton = manageStore.styleButtons.find(
+            ({ style }) => style === _style
+          );
+          styleButton.active = true;
+          styleButton.theme = "blueberry";
+        });
       } else {
         manageStore.title = "";
         manageStore.message = "";
         manageStore.currentColour = colours[0].colour;
+        manageStore.styleButtons.forEach((styleButton) => {
+          styleButton.active = false;
+          styleButton.theme = "snow";
+        });
       }
       await wait();
       this.manageFormElement?.title?.focus?.();
       this.manageFormElement["colour"].value = isEdit
         ? manageStore.editItem.colour
         : manageStore.currentColour;
+
       refresh(manageStore);
     };
+
+    getter(this, "messageLabel", () =>
+      element("div", { class: "flex space-between" }, [
+        element("p", { class: "no-margin line-height" }, "Message"),
+        element("ul", { class: "list flex" }, [
+          element(
+            "li",
+            { "m-for": "styleButtons", "m-key": "id" },
+            element(Button, {
+              class: "{theme} square",
+              "[label]": "label",
+              "[icon]": "icon",
+              "[id]": "id",
+              "[theme]": "theme",
+              "[onClick]": "onClick",
+            })
+          ),
+        ]),
+      ])
+    );
   },
   { class: "constrain centred padding-large" },
 
@@ -58,9 +96,11 @@ export const Manage = component(
 
           element(Field, {
             type: "textarea",
-            label: "Message",
+            "[label]": "messageLabel",
+            "[styleButtons]": "styleButtons",
             name: "message",
             "[value]": "message",
+            fieldStyles: "height: 26rem;",
             "[onInput]": "setMessage",
           }),
         ]),
@@ -75,19 +115,18 @@ export const Manage = component(
               {
                 "m-for": "colours",
                 "m-key": "colour",
-                class:
-                  "width-large height-large margin-right-small margin-bottom-small",
+                class: "margin-right-small margin-bottom-small",
               },
               element(
                 "div",
                 {
-                  class: "rounded",
-                  style: "box-shadow: inset 0 0 4px {colour};",
+                  class: "round",
+                  style: "box-shadow: inset 0 0 2px 2px {colour};",
                 },
                 element(Field, {
                   type: "radio",
                   name: "colour",
-                  class: "no-margin width-full height-full",
+                  class: "no-margin round",
                   "[value]": "colour",
                   "[onInput]": "setColour",
                 })

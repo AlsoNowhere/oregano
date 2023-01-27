@@ -7,7 +7,7 @@ import { manageStore } from "../stores/manage.store";
 import { listStore } from "../stores/list.store";
 
 export const backToList = () => {
-  manageStore.edit = false;
+  manageStore.editItem = null;
   path.set(["list", ...listStore.depthIndexing]);
   refresh(appStore);
 };
