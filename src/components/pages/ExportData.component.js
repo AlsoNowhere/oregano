@@ -1,9 +1,10 @@
 import { component, element } from "mint";
 
-import { AltButtons } from "./structure/AltButtons.component";
-import { Field } from "../../common/Field.component";
+import { Field } from "../common/Field.component";
 
-import { exportStore } from "../../../stores/export.store";
+import { AltButtons } from "../additions/AltButtons.component";
+
+import { exportStore } from "../../stores/export.store";
 
 export const ExportData = component(
   "div",

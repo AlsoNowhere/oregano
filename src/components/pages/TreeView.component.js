@@ -1,8 +1,8 @@
 import { component, element, getter, template } from "mint";
 
-import { AltButtons } from "./structure/AltButtons.component";
+import { AltButtons } from "../additions/AltButtons.component";
 
-import { treeStore } from "../../../stores/tree.store";
+import { treeStore } from "../../stores/tree.store";
 
 const Tree = component(
   "ul",

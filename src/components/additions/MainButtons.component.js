@@ -1,8 +1,8 @@
 import { component, element } from "mint";
 
-import { Button } from "../../../common/Button.component";
+import { Button } from "../common/Button.component";
 
-import { mainButtonsStore } from "../../../../stores/main-buttons.store";
+import { mainButtonsStore } from "../../stores/main-buttons.store";
 
 export const MainButtons = component(
   "div",

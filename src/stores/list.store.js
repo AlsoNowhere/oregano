@@ -11,6 +11,7 @@ import { UndoConfig } from "../models/UndoConfig.model";
 
 export const listStore = new Store({
   depthIndexing: [],
+  dragIndex: null,
 
   currentItem: new Resolver(() => {
     const item = getItem(path.get().slice(1));
@@ -26,8 +27,14 @@ export const listStore = new Store({
 
   currentMessage: new Resolver(() => {
     const item = getItem(path.get().slice(1));
-    if (item === null) return "";
+    if (item === null) return [];
     return item.message;
+  }),
+
+  currentStyles: new Resolver(() => {
+    const item = getItem(path.get().slice(1));
+    if (item === null) return [];
+    return (item.styles || []).reduce((a, b) => (a += b), "");
   }),
 
   getColour: new Resolver(function (a, b) {
@@ -53,6 +60,22 @@ export const listStore = new Store({
     const nextIndex = this._i + "";
     path.set([...path.get(), nextIndex]);
     listStore.depthIndexing.push(nextIndex);
+    refresh(listStore);
+  },
+
+  onDragStart() {
+    listStore.dragIndex = this._i;
+  },
+
+  onDragOver(event) {
+    event.preventDefault();
+  },
+
+  onDrop(_, __, scope) {
+    const index = scope._i;
+    const [holdItem] = listStore.list.splice(listStore.dragIndex, 1);
+    listStore.list.splice(index, 0, holdItem);
+    listStore.dragIndex = null;
     refresh(listStore);
   },
 
