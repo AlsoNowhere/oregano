@@ -23,6 +23,7 @@ export const Manage = component(
         manageStore.title = manageStore.editItem.title;
         manageStore.message =
           message instanceof Array ? message.join("\n==b\n") : message;
+        manageStore.currentColour = manageStore.editItem.colour;
         manageStore.styleButtons.forEach((styleButton) => {
           styleButton.active = false;
           styleButton.theme = "snow";
@@ -45,9 +46,10 @@ export const Manage = component(
       }
       await wait();
       this.manageFormElement?.title?.focus?.();
-      this.manageFormElement["colour"].value = isEdit
-        ? manageStore.editItem.colour
-        : manageStore.currentColour;
+      // this.manageFormElement["colour"].value = isEdit
+      //   ? manageStore.editItem.colour
+      //   : manageStore.currentColour;
+      this.manageFormElement["colour"].value = manageStore.currentColour;
 
       refresh(manageStore);
     };
