@@ -3,8 +3,10 @@
 }
 
 .list-page {
-  width: @pageWidth;
-  .centred;
+  &__main-buttons {
+    width: @pageWidth;
+    .centred;
+  }
 
   &__container {
     height: calc(100vh - 11rem);
@@ -27,6 +29,11 @@
 
     &::-webkit-scrollbar-thumb:hover {
       background: #555;
+    }
+
+    &-items {
+      width: @pageWidth;
+      .centred;
     }
   }
 

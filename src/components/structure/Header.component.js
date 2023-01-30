@@ -42,6 +42,7 @@ export const Header = component(
         element(
           "svg",
           {
+            class: "absolute middle width height",
             viewBox: "0 0 32 32",
           },
           [

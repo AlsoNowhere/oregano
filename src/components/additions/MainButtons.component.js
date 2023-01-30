@@ -15,7 +15,7 @@ export const MainButtons = component(
       mainButtonsStore.mainButtonsElement = this._mainButtonsElement;
     };
   },
-  null,
+  { class: "list-page__main-buttons" },
   element(
     "ul",
     { class: "list flex margin-bottom", "m-ref": "_mainButtonsElement" },
