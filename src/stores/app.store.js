@@ -37,4 +37,14 @@ export const appStore = new Store({
     const [url] = path.get();
     return url === "tree-view";
   }),
+
+  showGraph: new Resolver(function () {
+    const [url] = path.get();
+    return url === "graph-view";
+  }),
+
+  showHeatmap: new Resolver(function () {
+    const [url] = path.get();
+    return url === "heat-map";
+  }),
 });

@@ -1,4 +1,4 @@
-import { component, element, getter, refresh } from "mint";
+import { component, element, getter, template } from "mint";
 
 import { Button } from "../common/Button.component";
 
@@ -14,31 +14,59 @@ export const List = component(
   function () {
     listStore.connect(this);
 
-    getter(this, "messageIsArray", function () {
-      return listStore.currentMessage instanceof Array;
-    });
-
     getter(this, "getTextColour", function () {
       const colour = colours.find(({ colour }) => colour === this.colour);
       return colour?.textColour || colours[0].colour;
+    });
+
+    getter(this, "hasLabel", function () {
+      return this.label !== null;
+    });
+
+    getter(this, "hasIcon", function () {
+      return this.icon !== null;
+    });
+
+    getter(this, "getIndex", function () {
+      return this.__proto__._i;
     });
   },
   { class: "list-page" },
   [
     element(MainButtons),
+
     element(
       "div",
       { class: "list-page__container" },
       element("div", { class: "list-page__container-items" }, [
         element(Breadcrumbs),
-        element("h2", null, "{currentTitle}"),
+
+        element("div", { class: "flex space-between" }, [
+          element("h2", null, "{currentTitle}"),
+          element(
+            "ul",
+            { class: "list flex align-centre" },
+            element(
+              "li",
+              {
+                "m-for": "filteredActionButtons",
+                "m-key": "id",
+                class: "padding-left",
+              },
+              element("span", null, [
+                element("span", { "m-if": "hasLabel" }, "{label}"),
+                element("span", { "m-if": "hasIcon", class: "fa fa-{icon}" }),
+              ])
+            )
+          ),
+        ]),
         element(
-          "p",
+          "div",
           {
             "m-if": "!messageIsArray",
             style: "white-space: pre-wrap; {currentStyles}",
           },
-          "{currentMessage}"
+          template("renderedMessage")
         ),
         element(
           "ul",
@@ -92,34 +120,18 @@ export const List = component(
                       class: "fa fa-list absolute middle blueberry-text",
                     })
                   ),
+
                   element(
                     "li",
-                    null,
+                    {
+                      "m-for": "itemActions",
+                      "m-key": "_i",
+                    },
                     element(Button, {
                       class: "empty square large",
-                      icon: "pencil",
-                      "[itemIndex]": "_i",
-                      "[onClick]": "editItem",
-                    })
-                  ),
-                  element(
-                    "li",
-                    null,
-                    element(Button, {
-                      class: "empty square large",
-                      icon: "scissors",
-                      "[itemIndex]": "_i",
-                      "[onClick]": "cutItem",
-                    })
-                  ),
-                  element(
-                    "li",
-                    null,
-                    element(Button, {
-                      class: "empty square large",
-                      icon: "trash-o",
-                      "[itemIndex]": "_i",
-                      "[onClick]": "deleteItem",
+                      "[icon]": "icon",
+                      "[itemIndex]": "getIndex",
+                      "[onClick]": "action",
                     })
                   ),
                 ]),

@@ -7,6 +7,8 @@ import { Manage } from "./pages/ManagePage.component";
 import { ExportData } from "./pages/ExportData.component";
 import { ImportData } from "./pages/ImportData.component";
 import { TreeView } from "./pages/TreeView.component";
+import { GraphView } from "./pages/GraphView.component";
+import { Heatmap } from "./pages/Heatmap.component";
 
 import { appInit } from "../services/app-init.service";
 
@@ -30,6 +32,8 @@ export const App = component(
       element(ExportData, { "m-if": "showExport" }),
       element(ImportData, { "m-if": "showImport" }),
       element(TreeView, { "m-if": "showTree" }),
+      element(GraphView, { "m-if": "showGraph" }),
+      element(Heatmap, { "m-if": "showHeatmap" }),
     ]),
   ]
 );

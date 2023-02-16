@@ -25,7 +25,7 @@ export const ImportData = component(
   [
     element(AltButtons),
 
-    element("section", { class: "constrain centred" }, [
+    element("section", { class: "other-content" }, [
       element("h2", { class: "no-margin" }, "Import into - {currentTitle}"),
 
       element(

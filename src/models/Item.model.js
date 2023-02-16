@@ -6,12 +6,12 @@ export const Item = function (
   title = "",
   message = "",
   colour = colours[0].colour,
-  styles = []
+  actions = []
 ) {
   this.title = title;
   this.message = message;
   this.colour = colour;
-  this.styles = styles;
+  this.actions = actions;
   this.items = [];
   this.index = appStore.rootData.itemIndex++;
 };
