@@ -13,7 +13,7 @@ import { Item } from "../models/Item.model";
 import { UndoConfig } from "../models/UndoConfig.model";
 
 import { colours } from "../data/colours.data";
-import { styleButtons } from "../data/style-buttons.data";
+import { actionButtons } from "../data/action-buttons.data";
 
 const colour = colours[0].colour;
 
@@ -22,7 +22,7 @@ export const manageStore = new Store({
   message: "",
   colours,
   currentColour: colour,
-  styleButtons,
+  actionButtons,
 
   setTitle(_, element) {
     manageStore.title = element.value;
@@ -49,22 +49,36 @@ export const manageStore = new Store({
       _message = messages;
     }
     if (manageStore.editItem !== null) {
-      const styles = styleButtons.reduce(
-        (a, b) => (b.active && a.push(b.style), a),
+      const actions = actionButtons.reduce(
+        (a, b) => (b.active && a.push(b.action.id), a),
         []
       );
       manageStore.editItem.title = title;
       manageStore.editItem.message = _message;
       manageStore.editItem.colour = currentColour;
-      manageStore.editItem.styles = styles;
+      manageStore.editItem.actions = actions;
       manageStore.editItem = null;
     } else {
-      const styles = styleButtons.reduce(
-        (a, b) => (b.active && a.push(b.style), a),
+      const actions = actionButtons.reduce(
+        (a, b) => (b.active && a.push(b.action.id), a),
         []
       );
-      const newItem = new Item(title, _message, currentColour, styles);
-      listStore.list.push(newItem);
+      const newItem = new Item(title, _message, currentColour, actions);
+
+      {
+        const actions = (listStore.currentItem.actions || [])
+          .map(
+            (x) => actionButtons.find(({ action: { id } }) => x === id).action
+          )
+          .filter(({ type }) => type === "add-to-list");
+
+        if (actions.length === 0) {
+          listStore.list.push(newItem);
+        } else {
+          actions.forEach(({ value }) => value(listStore.currentItem, newItem));
+        }
+      }
+
       appStore.rootData.undoItems.unshift(
         new UndoConfig("add", { item: newItem, path: path.get().slice(1) })
       );
@@ -72,6 +86,7 @@ export const manageStore = new Store({
         appStore.rootData.undoItems = appStore.rootData.undoItems.slice(0, 1);
     }
     saveData();
+    listStore.depthIndexing = path.get().slice(1);
     backToList();
     (async () => {
       await wait();
@@ -82,6 +97,7 @@ export const manageStore = new Store({
   },
 
   cancel() {
+    listStore.depthIndexing = path.get().slice(1);
     backToList();
   },
 });

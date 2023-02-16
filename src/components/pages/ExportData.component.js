@@ -14,7 +14,7 @@ export const ExportData = component(
   null,
   [
     element(AltButtons),
-    element("section", { class: "constrain centred" }, [
+    element("section", { class: "other-content" }, [
       element("h2", null, "{currentTitle}"),
       element(
         "form",

@@ -16,21 +16,40 @@ export const MainButtons = component(
     };
   },
   { class: "list-page__main-buttons" },
-  element(
-    "ul",
-    { class: "list flex margin-bottom", "m-ref": "_mainButtonsElement" },
+  [
     element(
-      "li",
-      { "m-for": "mainButtons", "m-key": "_i" },
-      element(Button, {
-        class: "square large margin-right font-size-large {theme}",
-        "[icon]": "icon",
-        "[theme]": "theme",
-        "[title]": "title",
-        "[disabled]": "disabled",
-        "[extraButtonLabel]": "extraButtonLabel",
-        "[onClick]": "onClick",
-      })
-    )
-  )
+      "ul",
+      { class: "list flex margin-bottom", "m-ref": "_mainButtonsElement" },
+      element(
+        "li",
+        { "m-for": "mainButtons", "m-key": "_i" },
+        element(Button, {
+          class: "square large margin-right font-size-large {theme}",
+          "[icon]": "icon",
+          "[theme]": "theme",
+          "[title]": "title",
+          "[disabled]": "disabled",
+          "[extraButtonLabel]": "extraButtonLabel",
+          "[onClick]": "onClick",
+        })
+      )
+    ),
+    element(
+      "ul",
+      { class: "list flex margin-bottom" },
+      element(
+        "li",
+        { "m-for": "secondaryButtons", "m-key": "_i" },
+        element(Button, {
+          class: "square large margin-right font-size-large {theme}",
+          "[icon]": "icon",
+          "[theme]": "theme",
+          "[title]": "title",
+          "[disabled]": "disabled",
+          "[extraButtonLabel]": "extraButtonLabel",
+          "[onClick]": "onClick",
+        })
+      )
+    ),
+  ]
 );

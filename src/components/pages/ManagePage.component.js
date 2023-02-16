@@ -24,35 +24,39 @@ export const Manage = component(
         manageStore.message =
           message instanceof Array ? message.join("\n==b\n") : message;
         manageStore.currentColour = manageStore.editItem.colour;
-        manageStore.styleButtons.forEach((styleButton) => {
-          styleButton.active = false;
-          styleButton.theme = "snow";
+        manageStore.actionButtons.forEach((actionButton) => {
+          actionButton.active = false;
+          actionButton.theme = "snow";
         });
-        (manageStore.editItem.styles || []).forEach((_style) => {
-          const styleButton = manageStore.styleButtons.find(
-            ({ style }) => style === _style
+
+        (manageStore.editItem.actions || []).forEach((_action) => {
+          const actionButton = manageStore.actionButtons.find(
+            ({ id }) => id === _action
           );
-          styleButton.active = true;
-          styleButton.theme = "blueberry";
+          if (actionButton !== undefined) {
+            actionButton.active = true;
+            actionButton.theme = "blueberry";
+          }
         });
       } else {
         manageStore.title = "";
         manageStore.message = "";
         manageStore.currentColour = colours[0].colour;
-        manageStore.styleButtons.forEach((styleButton) => {
-          styleButton.active = false;
-          styleButton.theme = "snow";
+        manageStore.actionButtons.forEach((actionButton) => {
+          actionButton.active = false;
+          actionButton.theme = "snow";
         });
       }
       await wait();
       this.manageFormElement?.title?.focus?.();
-      // this.manageFormElement["colour"].value = isEdit
-      //   ? manageStore.editItem.colour
-      //   : manageStore.currentColour;
       this.manageFormElement["colour"].value = manageStore.currentColour;
 
       refresh(manageStore);
     };
+
+    getter(this, "mainLabel", () =>
+      manageStore.editItem !== null ? "Edit" : "Add"
+    );
 
     getter(this, "messageLabel", () =>
       element("div", { class: "flex space-between" }, [
@@ -60,11 +64,12 @@ export const Manage = component(
         element("ul", { class: "list flex" }, [
           element(
             "li",
-            { "m-for": "styleButtons", "m-key": "id" },
+            { "m-for": "actionButtons", "m-key": "id" },
             element(Button, {
               class: "{theme} square",
               "[label]": "label",
               "[icon]": "icon",
+              "[title]": "title",
               "[id]": "id",
               "[theme]": "theme",
               "[onClick]": "onClick",
@@ -79,13 +84,13 @@ export const Manage = component(
   element(
     "form",
     {
-      class: "form",
+      class: "form manage-form",
       autocomplete: "off",
       "(submit)": "onSubmit",
       "m-ref": "manageFormElement",
     },
     [
-      element("h2", null, "Add item"),
+      element("h2", null, "{mainLabel} item"),
       element("div", { class: "flex" }, [
         element("div", { class: "grid-9 padded-right-small" }, [
           element(Field, {
@@ -99,7 +104,9 @@ export const Manage = component(
           element(Field, {
             type: "textarea",
             "[label]": "messageLabel",
-            "[styleButtons]": "styleButtons",
+            labelClass: "relative",
+            class: "manage-form__message",
+            "[actionButtons]": "actionButtons",
             name: "message",
             "[value]": "message",
             fieldStyles: "height: 26rem;",
