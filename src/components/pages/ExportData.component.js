@@ -14,20 +14,24 @@ export const ExportData = component(
   null,
   [
     element(AltButtons),
-    element("section", { class: "other-content" }, [
-      element("h2", null, "{currentTitle}"),
-      element(
-        "form",
-        { name: "export-data", class: "form" },
-        element(Field, {
-          type: "textarea",
-          label: "Export data",
-          name: "export-data",
-          "[value]": "currentValue",
-          fieldStyles:
-            "height:300px;font-size:1rem;line-height:1.1rem;resize:none;",
-        })
-      ),
-    ]),
+    element(
+      "div",
+      { class: "other-content" },
+      element("section", { class: "other-content__container" }, [
+        element("h2", null, "{currentTitle}"),
+        element(
+          "form",
+          { name: "export-data", class: "form" },
+          element(Field, {
+            type: "textarea",
+            label: "Export data",
+            name: "export-data",
+            "[value]": "currentValue",
+            fieldStyles:
+              "height:300px;font-size:1rem;line-height:1.1rem;resize:none;",
+          })
+        ),
+      ])
+    ),
   ]
 );

@@ -33,12 +33,14 @@ export const TreeView = component(
   [
     element(AltButtons),
 
-    element("div", { class: "other-content" }, [
+    element(
+      "div",
+      { class: "other-content" },
       element("section", { class: "other-content__container" }, [
         element("div", { class: "other-content__title" }, "{currentTitle}"),
 
         element(Tree, { "[tree]": "currentList" }),
-      ]),
-    ]),
+      ])
+    ),
   ]
 );

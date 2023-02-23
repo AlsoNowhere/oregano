@@ -33,7 +33,23 @@ export const GraphView = component(
 
     this.oneach = function () {
       setTimeout(() => {
-        new Line(this.svgElementRef, flattenData(graphStore.currentList));
+        const data = flattenData(graphStore.currentList);
+        const maxY = Math.ceil(
+          data.reduce((a, b) => (b.y > a ? b.y : a), -Infinity)
+        );
+        const minY = Math.floor(
+          data.reduce((a, b) => (b.y < a ? b.y : a), Infinity)
+        );
+        new Line(this.svgElementRef, data, {
+          xLabelsAreVertical: true,
+          borderColour: "lightgrey",
+          pointColour: "#3d7fe3",
+          lineColour: "#3d7fe3",
+          pointSize: 3,
+          tooltip: true,
+          maxY,
+          minY,
+        });
       }, 0);
     };
   },
@@ -51,8 +67,9 @@ export const GraphView = component(
           "{currentTitle}"
         ),
         element("svg", {
-          class: "border",
-          style: "width:600px;height:300px;",
+          class: "",
+          viewBox: "0 0 836 420",
+          style: "width:836px;height:420px;",
           "m-ref": "svgElementRef",
         }),
       ])
