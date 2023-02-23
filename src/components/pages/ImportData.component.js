@@ -25,28 +25,36 @@ export const ImportData = component(
   [
     element(AltButtons),
 
-    element("section", { class: "other-content" }, [
-      element("h2", { class: "no-margin" }, "Import into - {currentTitle}"),
+    element(
+      "div",
+      { class: "other-content" },
+      element("section", { class: "other-content__container" }, [
+        element("h2", { class: "no-margin" }, "Import into - {currentTitle}"),
 
-      element(
-        "form",
-        { class: "form", "(submit)": "onSubmit", "m-ref": "importFormElement" },
-        [
-          element(Field, {
-            type: "textarea",
-            name: "importValue",
-            label: "Enter JSON data here",
-            "[value]": "importValue",
-            fieldStyles: "",
-            "[onInput]": "onInput",
-          }),
-          element(Button, {
-            type: "submit",
-            class: "button apple large padded",
-            label: "Import data",
-          }),
-        ]
-      ),
-    ]),
+        element(
+          "form",
+          {
+            class: "form",
+            "(submit)": "onSubmit",
+            "m-ref": "importFormElement",
+          },
+          [
+            element(Field, {
+              type: "textarea",
+              name: "importValue",
+              label: "Enter JSON data here",
+              "[value]": "importValue",
+              fieldStyles: "",
+              "[onInput]": "onInput",
+            }),
+            element(Button, {
+              type: "submit",
+              class: "button apple large padded",
+              label: "Import data",
+            }),
+          ]
+        ),
+      ])
+    ),
   ]
 );
