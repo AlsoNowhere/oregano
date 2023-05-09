@@ -1,6 +1,6 @@
 {
   "name": "oregano",
-  "version": "1.0.0",
+  "version": "4.1.0",
   "description": "",
   "main": "./electron/index.js",
   "scripts": {
@@ -16,8 +16,10 @@
   "license": "ISC",
   "devDependencies": {
     "@electron/remote": "^2.0.9",
+    "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^13.3.0",
-    "chive": "file:../chive",
+    "basil": "file:../Basil",
+    "chive": "file:../Chive",
     "electron": "^22.0.2",
     "electron-packager": "^17.1.1",
     "less": "^4.1.3",

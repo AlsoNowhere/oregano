@@ -1,11 +1,9 @@
-import { resolveLeadingZeroes } from "./resolve-leading-zeroes.service";
+import { getDate } from "./get-date.service";
 
 export const getTodaysDate = () => {
-  const date = new Date();
-  const [day, month, year] = [
-    date.getDate(),
-    date.getMonth() + 1,
-    date.getFullYear(),
-  ];
-  return `${day}-${resolveLeadingZeroes(month)}-${resolveLeadingZeroes(year)}`;
+  // return getDate(Date.now());
+
+  const { day, month, year } = getDate(Date.now());
+
+  return `${day}-${month}-${year}`;
 };

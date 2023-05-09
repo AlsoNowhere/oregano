@@ -14,4 +14,6 @@ export const Item = function (
   this.actions = actions;
   this.items = [];
   this.index = appStore.rootData.itemIndex++;
+  this.createdAt = Math.floor(Date.now() - appStore.rootData.timestamp_root);
+  this.edits = [];
 };

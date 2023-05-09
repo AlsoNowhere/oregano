@@ -9,6 +9,7 @@ import { ImportData } from "./pages/ImportData.component";
 import { TreeView } from "./pages/TreeView.component";
 import { GraphView } from "./pages/GraphView.component";
 import { Heatmap } from "./pages/Heatmap.component";
+import { Search } from "./pages/Search.component";
 
 import { appInit } from "../services/app-init.service";
 
@@ -34,6 +35,7 @@ export const App = component(
       element(TreeView, { "m-if": "showTree" }),
       element(GraphView, { "m-if": "showGraph" }),
       element(Heatmap, { "m-if": "showHeatmap" }),
+      element(Search, { "m-if": "showSearch" }),
     ]),
   ]
 );

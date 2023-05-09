@@ -3,9 +3,9 @@ import { refresh } from "mint";
 import { wait } from "./wait.service";
 import { path } from "./path.service";
 import { loadData } from "./load-save.service";
+import { backToList } from "./back-to-list.service";
 
 import { appStore } from "../stores/app.store";
-import { backToList } from "./back-to-list.service";
 
 export const appInit = async () => {
   const [url] = path.get();
