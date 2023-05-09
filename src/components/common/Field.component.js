@@ -3,6 +3,7 @@ import { component, element, getter, template, MintElement } from "mint";
 const commonProps = {
   "[name]": "name",
   "[class]": "class",
+  "[placeholder]": "placeholder",
   "[value]": "value",
   "[required]": "required",
   "(input)": "onInput",
@@ -20,6 +21,7 @@ export const Field = component(
     this.fieldStyles = undefined;
     this.dataId = undefined;
     this.labelBefore = false;
+    this.wrapperClasses = "";
 
     getter(this, "hasLabelBefore", function () {
       return (
@@ -54,7 +56,7 @@ export const Field = component(
       return this.type === "checkbox" ? "checkbox" : undefined;
     });
   },
-  { class: "relative" },
+  { class: "relative {wrapperClasses}" },
   [
     element(
       "div",

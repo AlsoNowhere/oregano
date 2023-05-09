@@ -47,4 +47,9 @@ export const appStore = new Store({
     const [url] = path.get();
     return url === "heat-map";
   }),
+
+  showSearch: new Resolver(function () {
+    const [url] = path.get();
+    return url === "search";
+  }),
 });

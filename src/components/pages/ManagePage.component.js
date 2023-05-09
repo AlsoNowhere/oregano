@@ -8,6 +8,7 @@ import { wait } from "../../services/wait.service";
 import { manageStore } from "../../stores/manage.store";
 
 import { colours } from "../../data/colours.data";
+import { actionButtons } from "../../data/action-buttons.data";
 
 export const Manage = component(
   "section",
@@ -15,6 +16,8 @@ export const Manage = component(
     this.manageFormElement = null;
 
     manageStore.connect(this);
+
+    this.actionButtons = actionButtons;
 
     this.oneach = async function () {
       const isEdit = manageStore.editItem !== null;
@@ -24,15 +27,13 @@ export const Manage = component(
         manageStore.message =
           message instanceof Array ? message.join("\n==b\n") : message;
         manageStore.currentColour = manageStore.editItem.colour;
-        manageStore.actionButtons.forEach((actionButton) => {
+        actionButtons.forEach((actionButton) => {
           actionButton.active = false;
           actionButton.theme = "snow";
         });
 
         (manageStore.editItem.actions || []).forEach((_action) => {
-          const actionButton = manageStore.actionButtons.find(
-            ({ id }) => id === _action
-          );
+          const actionButton = actionButtons.find(({ id }) => id === _action);
           if (actionButton !== undefined) {
             actionButton.active = true;
             actionButton.theme = "blueberry";
@@ -42,7 +43,7 @@ export const Manage = component(
         manageStore.title = "";
         manageStore.message = "";
         manageStore.currentColour = colours[0].colour;
-        manageStore.actionButtons.forEach((actionButton) => {
+        actionButtons.forEach((actionButton) => {
           actionButton.active = false;
           actionButton.theme = "snow";
         });
@@ -61,21 +62,6 @@ export const Manage = component(
     getter(this, "messageLabel", () =>
       element("div", { class: "flex space-between" }, [
         element("p", { class: "no-margin line-height" }, "Message"),
-        element("ul", { class: "list flex" }, [
-          element(
-            "li",
-            { "m-for": "actionButtons", "m-key": "id" },
-            element(Button, {
-              class: "{theme} square",
-              "[label]": "label",
-              "[icon]": "icon",
-              "[title]": "title",
-              "[id]": "id",
-              "[theme]": "theme",
-              "[onClick]": "onClick",
-            })
-          ),
-        ]),
       ])
     );
   },
@@ -91,6 +77,7 @@ export const Manage = component(
     },
     [
       element("h2", null, "{mainLabel} item"),
+
       element("div", { class: "flex" }, [
         element("div", { class: "grid-9 padded-right-small" }, [
           element(Field, {
@@ -106,7 +93,6 @@ export const Manage = component(
             "[label]": "messageLabel",
             labelClass: "relative",
             class: "manage-form__message",
-            "[actionButtons]": "actionButtons",
             name: "message",
             "[value]": "message",
             fieldStyles: "height: 26rem;",
@@ -143,6 +129,25 @@ export const Manage = component(
             )
           ),
         ]),
+      ]),
+
+      element("ul", { class: "list flex margin-bottom" }, [
+        element(
+          "li",
+          {
+            "m-for": "actionButtons",
+            "m-key": "id",
+          },
+          element(Button, {
+            class: "{theme} square",
+            "[label]": "label",
+            "[icon]": "icon",
+            "[title]": "title",
+            "[id]": "id",
+            "[theme]": "theme",
+            "[onClick]": "onClick",
+          })
+        ),
       ]),
 
       element("div", { class: "grid-12" }, [

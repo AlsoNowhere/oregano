@@ -24,10 +24,25 @@ export const secondaryButtons = [
     path.set(["tree-view", ...path.get().slice(1)]);
     refresh(appStore);
   }),
-  new MainButton("Graph", "Graph view", "line-chart", "snow", () => {
-    path.set(["graph-view", ...path.get().slice(1)]);
+  new MainButton("Search", "Search", "search", "blueberry", () => {
+    path.set(["search", ...path.get().slice(1)]);
     refresh(appStore);
   }),
+  new MainButton(
+    "Graph",
+    "Graph view",
+    "line-chart",
+    "snow",
+    () => {
+      path.set(["graph-view", ...path.get().slice(1)]);
+      refresh(appStore);
+    },
+    {
+      condition() {
+        return listStore.currentItem.actions?.includes("has-chart");
+      },
+    }
+  ),
   new MainButton(
     "Heatmap",
     "Heat map",

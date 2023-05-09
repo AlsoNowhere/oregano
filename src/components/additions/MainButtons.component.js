@@ -19,12 +19,15 @@ export const MainButtons = component(
   [
     element(
       "ul",
-      { class: "list flex margin-bottom", "m-ref": "_mainButtonsElement" },
+      {
+        class: "list flex margin-bottom-small",
+        "m-ref": "_mainButtonsElement",
+      },
       element(
         "li",
         { "m-for": "mainButtons", "m-key": "_i" },
         element(Button, {
-          class: "square large margin-right font-size-large {theme}",
+          class: "square large margin-right-small font-size-large {theme}",
           "[icon]": "icon",
           "[theme]": "theme",
           "[title]": "title",
@@ -36,12 +39,12 @@ export const MainButtons = component(
     ),
     element(
       "ul",
-      { class: "list flex margin-bottom" },
+      { class: "list flex margin-bottom-small" },
       element(
         "li",
         { "m-for": "secondaryButtons", "m-key": "_i" },
         element(Button, {
-          class: "square large margin-right font-size-large {theme}",
+          class: "square large margin-right-small font-size-large {theme}",
           "[icon]": "icon",
           "[theme]": "theme",
           "[title]": "title",

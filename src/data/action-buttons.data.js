@@ -1,3 +1,5 @@
+import { listStore } from "../stores/list.store";
+
 import { Action } from "../models/Action.model";
 import { ActionButton } from "../models/ActionButton.model";
 
@@ -26,5 +28,12 @@ export const actionButtons = [
   new ActionButton(
     { label: "B", title: "Bold font", id: "bold-font" },
     new Action("style", "bold-font", "font-weight: bold;")
+  ),
+  new ActionButton(
+    { icon: "line-chart", title: "Has charts", id: "charts" },
+    // add-to-list
+    new Action("add-to-list", "has-chart", (_, newItem) => {
+      listStore.list.push(newItem);
+    })
   ),
 ];

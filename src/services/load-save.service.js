@@ -7,7 +7,11 @@ export const loadData = async () => {
   const data =
     !localData || localData === "undefined" ? defaultData : localData;
   const parsed = JSON.parse(data);
+  if (parsed.timestamp_root === undefined) {
+    parsed.timestamp_root = Date.now();
+  }
   appStore.rootData = parsed;
+  saveData();
 };
 
 export const saveData = async () => {

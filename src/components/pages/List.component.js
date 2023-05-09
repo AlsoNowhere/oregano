@@ -5,7 +5,10 @@ import { Button } from "../common/Button.component";
 import { MainButtons } from "../additions/MainButtons.component";
 import { Breadcrumbs } from "../additions/Breadcrumbs.component";
 
+import { getDate } from "../../services/get-date.service";
+
 import { listStore } from "../../stores/list.store";
+import { appStore } from "../../stores/app.store";
 
 import { colours } from "../../data/colours.data";
 
@@ -30,6 +33,26 @@ export const List = component(
     getter(this, "getIndex", function () {
       return this.__proto__._i;
     });
+
+    getter(this, "createdDate", function () {
+      if (
+        this.createdAt === undefined &&
+        (!(this.edits instanceof Array) || this.edits.length === 0)
+      )
+        return "";
+      const time =
+        this.edits instanceof Array && this.edits.length > 0
+          ? this.edits.at(-1)
+          : this.createdAt;
+      const message =
+        this.edits instanceof Array && this.edits.length > 0
+          ? "Edited at"
+          : "Created at";
+      const { minutes, hours, day, month, year } = getDate(
+        time + appStore.rootData.timestamp_root
+      );
+      return `${message}: ${day}-${month}-${year} ${hours}:${minutes}`;
+    });
   },
   { class: "list-page" },
   [
@@ -41,8 +64,13 @@ export const List = component(
       element("div", { class: "list-page__container-items" }, [
         element(Breadcrumbs),
 
-        element("div", { class: "flex space-between" }, [
+        element("div", { class: "flex space-between relative" }, [
           element("h2", null, "{currentTitle}"),
+          element(
+            "span",
+            { class: "absolute top left padding-left smoke-text" },
+            "{currentCreatedAt}"
+          ),
           element(
             "ul",
             { class: "list flex align-centre" },
@@ -104,11 +132,17 @@ export const List = component(
                 style: "background-color: {colour}; color: {getTextColour};",
               },
               [
-                element(
-                  "div",
-                  { class: "list-page__item-title" },
-                  element("p", { class: "list-page__item-title-p" }, "{title}")
-                ),
+                element("div", { class: "list-page__item-title" }, [
+                  element("p", { class: "list-page__item-title-p" }, "{title}"),
+                  element(
+                    "span",
+                    {
+                      class:
+                        "absolute top left padding-left smoke-text font-size-small line-height snow-text-shadow",
+                    },
+                    "{createdDate}"
+                  ),
+                ]),
                 element("ul", { class: "list-page__item-options" }, [
                   element(
                     "li",

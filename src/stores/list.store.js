@@ -6,6 +6,7 @@ import { path } from "../services/path.service";
 import { renderMessage } from "../services/render-message.service";
 import { getTodaysDate } from "../services/get-todays-date.service";
 import { generateHeatmap } from "../services/generate-heatmap.service";
+import { getDate } from "../services/get-date.service";
 
 import { appStore } from "./app.store";
 import { manageStore } from "./manage.store";
@@ -33,6 +34,15 @@ export const listStore = new Store({
     return item.title;
   }),
 
+  currentCreatedAt: new Resolver(() => {
+    const item = getItem(path.get().slice(1));
+    if (item === null || item.createdAt === undefined) return "";
+    const { minutes, hours, day, month, year } = getDate(
+      item.createdAt + appStore.rootData.timestamp_root
+    );
+    return `Created at: ${day}-${month}-${year} ${hours}:${minutes}`;
+  }),
+
   currentMessage: new Resolver(() => {
     const item = getItem(path.get().slice(1));
     if (item === null) return "";
@@ -57,12 +67,16 @@ export const listStore = new Store({
   }),
 
   items: new Resolver(() =>
-    listStore.list.map(({ index, title, message, colour }) => ({
-      index,
-      title,
-      colour: colour || "white",
-      hasMessage: !!message,
-    }))
+    listStore.list.map(
+      ({ index, title, message, colour, createdAt, edits }) => ({
+        index,
+        title,
+        colour: colour || "white",
+        createdAt,
+        edits,
+        hasMessage: !!message,
+      })
+    )
   ),
 
   messageIsArray: new Resolver(() => listStore.currentMessage instanceof Array),
@@ -80,7 +94,7 @@ export const listStore = new Store({
     const hasCheckbox = message.includes("--c");
     if (
       listStore.currentItem.actions?.includes("heatmap") &&
-      listStore.currentItem.heatmap[getTodaysDate()] === undefined
+      listStore.currentItem.heatmap?.[getTodaysDate()] === undefined
     ) {
       message = message.replace(/--c-c /g, "--c ");
     }
@@ -141,6 +155,7 @@ export const listStore = new Store({
     const [holdItem] = listStore.list.splice(listStore.dragIndex, 1);
     listStore.list.splice(index, 0, holdItem);
     listStore.dragIndex = null;
+    saveData();
     refresh(listStore);
   },
 

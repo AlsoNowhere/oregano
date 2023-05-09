@@ -22,7 +22,6 @@ export const manageStore = new Store({
   message: "",
   colours,
   currentColour: colour,
-  actionButtons,
 
   setTitle(_, element) {
     manageStore.title = element.value;
@@ -57,6 +56,13 @@ export const manageStore = new Store({
       manageStore.editItem.message = _message;
       manageStore.editItem.colour = currentColour;
       manageStore.editItem.actions = actions;
+      if (!(manageStore.editItem.edits instanceof Array)) {
+        manageStore.editItem.edits = [];
+      }
+      manageStore.editItem.edits.push(
+        Math.floor(Date.now() - appStore.rootData.timestamp_root)
+      );
+
       manageStore.editItem = null;
     } else {
       const actions = actionButtons.reduce(
