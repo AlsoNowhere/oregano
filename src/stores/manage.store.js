@@ -54,7 +54,7 @@ export const manageStore = new Store({
       // Create
       const newItem = new Item(title, message, currentColour, actions);
       const [action] = getActionAbles(
-        listStore.currentItem.actions,
+        listStore.currentItem.actions || [],
         "add-to-list"
       );
       if (!!action) {

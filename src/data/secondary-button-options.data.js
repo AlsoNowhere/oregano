@@ -39,7 +39,7 @@ export const secondaryButtons = [
     },
     {
       condition() {
-        return listStore.currentItem.actions?.includes("has-chart");
+        return listStore.currentItem.actions?.includes("charts");
       },
     }
   ),
