@@ -48,7 +48,7 @@ export const heatmapStore = new Store({
       }
     }
 
-    const checkboxTotal = item.message.match(/--c/g).length;
+    const checkboxTotal = item.message.match(/--c/g)?.length;
 
     heat.forEach(([key, value]) => {
       const count = Object.values(value).reduce((a, b) => (b ? a + 1 : a), 0);
