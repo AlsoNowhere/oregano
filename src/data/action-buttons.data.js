@@ -4,7 +4,12 @@ import { Action } from "../models/Action.model";
 import { ActionButton } from "../models/ActionButton.model";
 
 export const actionButtons = [
-  new ActionButton({ icon: "list", title: "Heatmap", id: "heatmap" }),
+  new ActionButton(
+    { icon: "list", title: "Heatmap", id: "heatmap" },
+    new Action("init", (item) => {
+      item.heatmap = {};
+    })
+  ),
   new ActionButton(
     { icon: "sort-numeric-asc", title: "List add order", id: "list-order" },
     new Action("add-to-list", (currentItem, newItem) =>

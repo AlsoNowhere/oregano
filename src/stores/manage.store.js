@@ -65,6 +65,7 @@ export const manageStore = new Store({
       appStore.rootData.undoItems = [
         new UndoConfig("add", { item: newItem, path: path.get().slice(1) }),
       ];
+      getActionAbles(actions || [], "init").forEach((x) => x(newItem));
     } else {
       // Edit
       manageStore.editItem.title = title;
@@ -76,6 +77,7 @@ export const manageStore = new Store({
       manageStore.editItem.edits.push(getTime());
       manageStore.editItem = null;
     }
+
     saveData();
     listStore.depthIndexing = path.get().slice(1);
     backToList();

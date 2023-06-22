@@ -20,16 +20,15 @@ export const Manage = component(
     this.actionButtons = actionButtons;
 
     this.oneach = async function () {
+      actionButtons.forEach((actionButton) => {
+        actionButton.active = false;
+      });
       const isEdit = manageStore.editItem !== null;
       if (!isEdit) {
         // Create
         manageStore.title = "";
         manageStore.message = "";
         manageStore.currentColour = colours[0].colour;
-        actionButtons.forEach((actionButton) => {
-          actionButton.active = false;
-          actionButton.theme = "snow";
-        });
       } else {
         // Edit
         manageStore.title = manageStore.editItem.title;
@@ -39,10 +38,6 @@ export const Manage = component(
             message instanceof Array ? message.join("\n==b\n") : message;
         }
         manageStore.currentColour = manageStore.editItem.colour;
-        actionButtons.forEach((actionButton) => {
-          actionButton.active = false;
-        });
-
         (manageStore.editItem.actions || []).forEach((_action) => {
           const actionButton = actionButtons.find(({ id }) => id === _action);
           if (actionButton === undefined) return;
