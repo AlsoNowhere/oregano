@@ -1,9 +1,11 @@
-import { Resolver, Store, refresh } from "mint";
+import { Resolver, Store } from "mint";
 
 import { wait } from "../services/wait.service";
 import { backToList } from "../services/back-to-list.service";
 import { saveData } from "../services/load-save.service";
 import { path } from "../services/path.service";
+import { getActionAbles, getActions } from "../services/get-actions.service";
+import { getTime } from "../services/get-time.service";
 
 import { listStore } from "./list.store";
 import { mainButtonsStore } from "./main-buttons.store";
@@ -13,7 +15,6 @@ import { Item } from "../models/Item.model";
 import { UndoConfig } from "../models/UndoConfig.model";
 
 import { colours } from "../data/colours.data";
-import { actionButtons } from "../data/action-buttons.data";
 
 const colour = colours[0].colour;
 
@@ -41,55 +42,39 @@ export const manageStore = new Store({
 
   onSubmit(event) {
     event.preventDefault();
-    const { title, message, currentColour } = manageStore;
-    let _message = message;
-    const messages = message.split("\n==b\n");
-    if (messages.length > 1) {
-      _message = messages;
-    }
-    if (manageStore.editItem !== null) {
-      const actions = actionButtons.reduce(
-        (a, b) => (b.active && a.push(b.action.id), a),
-        []
+    const { title, currentColour } = manageStore;
+    const message = (() => {
+      const { message } = manageStore;
+      const messages = message.split("\n==b\n");
+      return messages.length > 1 ? messages : message;
+    })();
+    const actions = getActions();
+
+    if (manageStore.editItem === null) {
+      // Create
+      const newItem = new Item(title, message, currentColour, actions);
+      const [action] = getActionAbles(
+        listStore.currentItem.actions,
+        "add-to-list"
       );
+      if (!!action) {
+        action(listStore.currentItem, newItem);
+      } else {
+        listStore.list.push(newItem);
+      }
+      appStore.rootData.undoItems = [
+        new UndoConfig("add", { item: newItem, path: path.get().slice(1) }),
+      ];
+    } else {
+      // Edit
       manageStore.editItem.title = title;
-      manageStore.editItem.message = _message;
+      manageStore.editItem.message = message;
       manageStore.editItem.colour = currentColour;
       manageStore.editItem.actions = actions;
-      if (!(manageStore.editItem.edits instanceof Array)) {
+      if (!(manageStore.editItem.edits instanceof Array))
         manageStore.editItem.edits = [];
-      }
-      manageStore.editItem.edits.push(
-        Math.floor(Date.now() - appStore.rootData.timestamp_root)
-      );
-
+      manageStore.editItem.edits.push(getTime());
       manageStore.editItem = null;
-    } else {
-      const actions = actionButtons.reduce(
-        (a, b) => (b.active && a.push(b.action.id), a),
-        []
-      );
-      const newItem = new Item(title, _message, currentColour, actions);
-
-      {
-        const actions = (listStore.currentItem.actions || [])
-          .map(
-            (x) => actionButtons.find(({ action: { id } }) => x === id).action
-          )
-          .filter(({ type }) => type === "add-to-list");
-
-        if (actions.length === 0) {
-          listStore.list.push(newItem);
-        } else {
-          actions.forEach(({ value }) => value(listStore.currentItem, newItem));
-        }
-      }
-
-      appStore.rootData.undoItems.unshift(
-        new UndoConfig("add", { item: newItem, path: path.get().slice(1) })
-      );
-      if (appStore.rootData.undoItems.length > 1)
-        appStore.rootData.undoItems = appStore.rootData.undoItems.slice(0, 1);
     }
     saveData();
     listStore.depthIndexing = path.get().slice(1);

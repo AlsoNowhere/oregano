@@ -1,5 +1,4 @@
-export const Action = function (type, id, value) {
+export const Action = function (type, value) {
   this.type = type;
   this.value = value;
-  this.id = id;
 };

@@ -14,6 +14,7 @@ import { Search } from "./pages/Search.component";
 import { appInit } from "../services/app-init.service";
 
 import { appStore } from "../stores/app.store";
+import { EditHeatmap } from "./pages/EditHeatmap.component";
 
 export const App = component(
   "main",
@@ -35,6 +36,7 @@ export const App = component(
       element(TreeView, { "m-if": "showTree" }),
       element(GraphView, { "m-if": "showGraph" }),
       element(Heatmap, { "m-if": "showHeatmap" }),
+      element(EditHeatmap, { "m-if": "showEditHeatmap" }),
       element(Search, { "m-if": "showSearch" }),
     ]),
   ]

@@ -5,8 +5,8 @@ import { saveData } from "../services/load-save.service";
 import { path } from "../services/path.service";
 import { renderMessage } from "../services/render-message.service";
 import { getTodaysDate } from "../services/get-todays-date.service";
-import { generateHeatmap } from "../services/generate-heatmap.service";
 import { getDate } from "../services/get-date.service";
+import { getActionAbles } from "../services/get-actions.service";
 
 import { appStore } from "./app.store";
 import { manageStore } from "./manage.store";
@@ -15,6 +15,8 @@ import { UndoConfig } from "../models/UndoConfig.model";
 
 import { actionButtons } from "../data/action-buttons.data";
 import { itemActions } from "../data/item-actions.data";
+import { updateMessage } from "../logic/update-message.logic";
+import { updateHeatmap } from "../logic/update-heatmap.logic";
 
 export const listStore = new Store({
   depthIndexing: [],
@@ -52,8 +54,8 @@ export const listStore = new Store({
   currentStyles: new Resolver(() => {
     const item = getItem(path.get().slice(1));
     if (item === null || item.actions === undefined) return "";
-    const styles = item.actions.filter((x) => x.type === "style");
-    return styles.reduce((a, b) => (a += b.value), "");
+    const styles = getActionAbles(item.actions, "style");
+    return styles.reduce((a, value) => (a += value), "");
   }),
 
   getColour: new Resolver(function (a, b) {
@@ -83,10 +85,12 @@ export const listStore = new Store({
 
   filteredActionButtons: new Resolver(() => {
     const actions = (listStore.currentItem.actions || []).map((x) => {
-      const action = actionButtons.find(({ action: { id } }) => id === x);
-      return { label: action.label, icon: action.icon };
+      const a = actionButtons.find(({ id }) => id === x);
+      if (!a) return;
+      const { label, icon } = a;
+      return { label, icon };
     });
-    return actions;
+    return actions.filter((x) => !!x);
   }),
 
   renderedMessage: new Resolver(() => {
@@ -98,39 +102,18 @@ export const listStore = new Store({
     ) {
       message = message.replace(/--c-c /g, "--c ");
     }
-    return element(hasCheckbox ? "form" : "div", null, renderMessage(message));
+    const output = element(
+      hasCheckbox ? "form" : "div",
+      null,
+      renderMessage(message)
+    );
+
+    return output;
   }),
 
   changeCheckbox(_, element) {
-    const split = listStore.currentMessage.split("");
-    const indexes = split.reduce((a, _, i) => {
-      if (split.slice(i, i + 4).join("") === "--c ") {
-        a.push({ index: i, state: false });
-      } else if (split.slice(i, i + 6).join("") === "--c-c ") {
-        a.push({ index: i, state: true });
-      }
-      return a;
-    }, []);
-
-    const dataId = parseInt(element.getAttribute("data-id"));
-
-    listStore.currentItem.message = [
-      ...split.slice(0, indexes[dataId].index),
-      indexes[dataId].state ? "--c " : "--c-c ",
-      ...split.slice(
-        indexes[dataId].index + (indexes[dataId].state ? 6 : 4),
-        split.length
-      ),
-    ].join("");
-
-    if (listStore.currentItem.actions.includes("heatmap")) {
-      const heatmap = generateHeatmap();
-      if (listStore.currentItem.heatmap === undefined) {
-        listStore.currentItem.heatmap = {};
-      }
-      const dateKey = getTodaysDate();
-      listStore.currentItem.heatmap[dateKey] = heatmap;
-    }
+    updateMessage(element, listStore.currentItem);
+    updateHeatmap(listStore.currentItem);
     saveData();
     refresh(listStore);
   },
@@ -162,7 +145,7 @@ export const listStore = new Store({
   editItem(event) {
     event.stopPropagation();
     manageStore.editItem = listStore.list[this.itemIndex];
-    path.set(["manage", ...path.get().slice(1)]);
+    path.set(["manage", ...path.get().slice(1), this.itemIndex]);
     refresh(appStore);
   },
 
