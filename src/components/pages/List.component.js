@@ -66,11 +66,13 @@ export const List = component(
 
         element("div", { class: "flex space-between relative" }, [
           element("h2", null, "{currentTitle}"),
-          element(
-            "span",
-            { class: "absolute top left padding-left smoke-text" },
-            "{currentCreatedAt}"
-          ),
+
+          // element(
+          //   "span",
+          //   { class: "absolute top left padding-left smoke-text" },
+          //   "{currentCreatedAt}"
+          // ),
+
           element(
             "ul",
             { class: "list flex align-centre" },
@@ -88,6 +90,7 @@ export const List = component(
             )
           ),
         ]),
+
         element(
           "div",
           {
@@ -96,6 +99,7 @@ export const List = component(
           },
           template("renderedMessage")
         ),
+
         element(
           "ul",
           { "m-if": "messageIsArray", class: "flex list" },
@@ -134,14 +138,14 @@ export const List = component(
               [
                 element("div", { class: "list-page__item-title" }, [
                   element("p", { class: "list-page__item-title-p" }, "{title}"),
-                  element(
-                    "span",
-                    {
-                      class:
-                        "absolute top left padding-left smoke-text font-size-small line-height snow-text-shadow",
-                    },
-                    "{createdDate}"
-                  ),
+                  // element(
+                  //   "span",
+                  //   {
+                  //     class:
+                  //       "absolute top left padding-left smoke-text font-size-small line-height snow-text-shadow",
+                  //   },
+                  //   "{createdDate}"
+                  // ),
                 ]),
                 element("ul", { class: "list-page__item-options" }, [
                   element(

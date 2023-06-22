@@ -48,6 +48,11 @@ export const appStore = new Store({
     return url === "heat-map";
   }),
 
+  showEditHeatmap: new Resolver(function () {
+    const [url] = path.get();
+    return url === "edit-heat-map";
+  }),
+
   showSearch: new Resolver(function () {
     const [url] = path.get();
     return url === "search";

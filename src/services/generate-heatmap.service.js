@@ -1,8 +1,7 @@
-import { listStore } from "../stores/list.store";
-
-export const generateHeatmap = () => {
+export const generateHeatmap = (message) => {
   const heatmap = {};
-  listStore.currentItem.message
+
+  message
     .split("\n")
     .filter((x) => x.slice(0, 3) === "--c")
     .map((x) => {
@@ -12,5 +11,6 @@ export const generateHeatmap = () => {
         heatmap[x.slice(4)] = 0;
       }
     });
+
   return heatmap;
 };

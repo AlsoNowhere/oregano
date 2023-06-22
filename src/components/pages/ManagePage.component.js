@@ -21,31 +21,32 @@ export const Manage = component(
 
     this.oneach = async function () {
       const isEdit = manageStore.editItem !== null;
-      if (isEdit) {
-        const message = manageStore.editItem.message;
-        manageStore.title = manageStore.editItem.title;
-        manageStore.message =
-          message instanceof Array ? message.join("\n==b\n") : message;
-        manageStore.currentColour = manageStore.editItem.colour;
-        actionButtons.forEach((actionButton) => {
-          actionButton.active = false;
-          actionButton.theme = "snow";
-        });
-
-        (manageStore.editItem.actions || []).forEach((_action) => {
-          const actionButton = actionButtons.find(({ id }) => id === _action);
-          if (actionButton !== undefined) {
-            actionButton.active = true;
-            actionButton.theme = "blueberry";
-          }
-        });
-      } else {
+      if (!isEdit) {
+        // Create
         manageStore.title = "";
         manageStore.message = "";
         manageStore.currentColour = colours[0].colour;
         actionButtons.forEach((actionButton) => {
           actionButton.active = false;
           actionButton.theme = "snow";
+        });
+      } else {
+        // Edit
+        manageStore.title = manageStore.editItem.title;
+        {
+          const message = manageStore.editItem.message;
+          manageStore.message =
+            message instanceof Array ? message.join("\n==b\n") : message;
+        }
+        manageStore.currentColour = manageStore.editItem.colour;
+        actionButtons.forEach((actionButton) => {
+          actionButton.active = false;
+        });
+
+        (manageStore.editItem.actions || []).forEach((_action) => {
+          const actionButton = actionButtons.find(({ id }) => id === _action);
+          if (actionButton === undefined) return;
+          actionButton.active = true;
         });
       }
       await wait();
@@ -64,8 +65,12 @@ export const Manage = component(
         element("p", { class: "no-margin line-height" }, "Message"),
       ])
     );
+
+    getter(this, "getTheme", function () {
+      return this.active ? "blueberry" : "snow";
+    });
   },
-  { class: "constrain centred padding-large" },
+  { class: "constrain centred padding-bowl-large" },
 
   element(
     "form",
@@ -95,7 +100,7 @@ export const Manage = component(
             class: "manage-form__message",
             name: "message",
             "[value]": "message",
-            fieldStyles: "height: 26rem;",
+            fieldStyles: "height: 23rem; resize: none;",
             "[onInput]": "setMessage",
           }),
         ]),
@@ -144,7 +149,8 @@ export const Manage = component(
             "[icon]": "icon",
             "[title]": "title",
             "[id]": "id",
-            "[theme]": "theme",
+            "[active]": "active",
+            "[theme]": "getTheme",
             "[onClick]": "onClick",
           })
         ),
