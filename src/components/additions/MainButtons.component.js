@@ -27,7 +27,7 @@ export const MainButtons = component(
         "li",
         { "m-for": "mainButtons", "m-key": "_i" },
         element(Button, {
-          class: "square large margin-right-small font-size-large {theme}",
+          class: "square margin-right-small font-size {theme}",
           "[icon]": "icon",
           "[theme]": "theme",
           "[title]": "title",
@@ -44,7 +44,7 @@ export const MainButtons = component(
         "li",
         { "m-for": "secondaryButtons", "m-key": "_i" },
         element(Button, {
-          class: "square large margin-right-small font-size-large {theme}",
+          class: "square margin-right-small font-size {theme}",
           "[icon]": "icon",
           "[theme]": "theme",
           "[title]": "title",

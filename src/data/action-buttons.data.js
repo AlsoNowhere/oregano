@@ -1,7 +1,7 @@
-import { listStore } from "../stores/list.store";
-
 import { Action } from "../models/Action.model";
 import { ActionButton } from "../models/ActionButton.model";
+
+import { site } from "./site.data";
 
 export const actionButtons = [
   new ActionButton(
@@ -29,5 +29,21 @@ export const actionButtons = [
     { label: "B", title: "Bold font", id: "bold-font" },
     new Action("style", "font-weight: bold;")
   ),
-  new ActionButton({ icon: "line-chart", title: "Has charts", id: "charts" }),
+  new ActionButton({
+    icon: "line-chart",
+    title: "Has charts",
+    id: "charts",
+  }),
+  new ActionButton({
+    icon: "clone",
+    title: "Message to side",
+    id: "message-to-side",
+  }),
+  new ActionButton({
+    icon: "circle-o-notch",
+    title: "Show items number",
+    id: "show-items-number",
+  }),
 ];
+
+site.actionButtons = actionButtons;

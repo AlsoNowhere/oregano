@@ -1,8 +1,7 @@
 import { refresh } from "mint";
 
-import { manageStore } from "../stores/manage.store";
-
 import { actionButtons } from "../data/action-buttons.data";
+import { site } from "../data/site.data";
 
 export const ActionButton = function ({ label, icon, title, id }, action) {
   this.label = label || null;
@@ -13,7 +12,7 @@ export const ActionButton = function ({ label, icon, title, id }, action) {
     const actionButton = actionButtons.find(({ id }) => id === this.id);
     actionButton.active = !actionButton.active;
     actionButton.theme = actionButton.active ? "blueberry" : "snow";
-    refresh(manageStore);
+    refresh(site.manageStore);
   };
   this.id = id;
   this.active = false;

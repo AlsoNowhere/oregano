@@ -9,12 +9,12 @@ import { ImportData } from "./pages/ImportData.component";
 import { TreeView } from "./pages/TreeView.component";
 import { GraphView } from "./pages/GraphView.component";
 import { Heatmap } from "./pages/Heatmap.component";
+import { EditHeatmap } from "./pages/EditHeatmap.component";
 import { Search } from "./pages/Search.component";
 
 import { appInit } from "../services/app-init.service";
 
 import { appStore } from "../stores/app.store";
-import { EditHeatmap } from "./pages/EditHeatmap.component";
 
 export const App = component(
   "main",

@@ -1,4 +1,4 @@
-import { Resolver, Store, refresh, element } from "mint";
+import { Resolver, Store, refresh, element, UpwardRef } from "mint";
 
 import { getItem } from "../services/get-item.service";
 import { saveData } from "../services/load-save.service";
@@ -8,6 +8,9 @@ import { getTodaysDate } from "../services/get-todays-date.service";
 import { getDate } from "../services/get-date.service";
 import { getActionAbles } from "../services/get-actions.service";
 
+import { updateMessage } from "../logic/update-message.logic";
+import { updateHeatmap } from "../logic/update-heatmap.logic";
+
 import { appStore } from "./app.store";
 import { manageStore } from "./manage.store";
 
@@ -15,14 +18,13 @@ import { UndoConfig } from "../models/UndoConfig.model";
 
 import { actionButtons } from "../data/action-buttons.data";
 import { itemActions } from "../data/item-actions.data";
-import { updateMessage } from "../logic/update-message.logic";
-import { updateHeatmap } from "../logic/update-heatmap.logic";
 
 export const listStore = new Store({
   depthIndexing: [],
   dragIndex: null,
   actionButtons,
   itemActions,
+  listElementRef: null,
 
   currentItem: new Resolver(() => {
     const item = getItem(path.get().slice(1));
