@@ -27,7 +27,7 @@ export const Header = component(
         "button",
         {
           type: "button",
-          class: "empty square large snow-text font-size-large",
+          class: "empty square snow-text font-size",
         },
         element("span", {
           class: "block absolute middle width-small height",
@@ -37,7 +37,7 @@ export const Header = component(
         "button",
         {
           type: "button",
-          class: "empty square large",
+          class: "empty square",
         },
         element(
           "svg",

@@ -12,6 +12,16 @@ import { appStore } from "../../stores/app.store";
 
 import { colours } from "../../data/colours.data";
 
+const showOverflow = function () {
+  const item = this.listElementRef.children[this._i];
+  if (!item) return false;
+  const [title] = item.getElementsByClassName("list-page__item-title");
+  const [p] = item.getElementsByClassName("list-page__item-title-p");
+  if (!p || p.offsetWidth === 0) return false;
+  if (p.offsetWidth < title.offsetWidth) return false;
+  return true;
+};
+
 export const List = component(
   "div",
   function () {
@@ -53,6 +63,28 @@ export const List = component(
       );
       return `${message}: ${day}-${month}-${year} ${hours}:${minutes}`;
     });
+
+    getter(this, "showOverflow", showOverflow);
+
+    getter(this, "showOverflowClass", function () {
+      return showOverflow.apply(this) ? "overflows" : "";
+    });
+
+    getter(this, "messageIsToTheSide", () =>
+      listStore.currentItem.actions.includes("message-to-side")
+        ? "flex flex-nowrap"
+        : ""
+    );
+
+    getter(this, "showItemsNumber", function () {
+      return listStore.currentItem.items[this._i].actions.includes(
+        "show-items-number"
+      );
+    });
+
+    getter(this, "itemsCount", function () {
+      return listStore.currentItem.items[this._i].items.length;
+    });
   },
   { class: "list-page" },
   [
@@ -65,13 +97,7 @@ export const List = component(
         element(Breadcrumbs),
 
         element("div", { class: "flex space-between relative" }, [
-          element("h2", null, "{currentTitle}"),
-
-          // element(
-          //   "span",
-          //   { class: "absolute top left padding-left smoke-text" },
-          //   "{currentCreatedAt}"
-          // ),
+          element("h2", { class: "page-title" }, "{currentTitle}"),
 
           element(
             "ul",
@@ -91,92 +117,120 @@ export const List = component(
           ),
         ]),
 
-        element(
-          "div",
-          {
-            "m-if": "!messageIsArray",
-            style: "white-space: pre-wrap; {currentStyles}",
-          },
-          template("renderedMessage")
-        ),
-
-        element(
-          "ul",
-          { "m-if": "messageIsArray", class: "flex list" },
-          element(
-            "li",
-            {
-              "m-for": "currentMessage",
-              "m-key": "_x",
-              class: "padded",
-              style: "white-space: pre-wrap;",
-            },
-            "{_x}"
-          )
-        ),
-        element(
-          "ul",
-          { class: "list list-page__list" },
-          element(
-            "li",
-            {
-              "m-for": "items",
-              "m-key": "index",
-              class: "list-page__item",
-              "(click)": "selectItem",
-              draggable: "true",
-              "(dragstart)": "onDragStart",
-              "(dragover)": "onDragOver",
-              "(drop)": "onDrop",
-            },
+        element("div", { "[class]": "messageIsToTheSide" }, [
+          element("div", { class: "list-page__message" }, [
             element(
               "div",
               {
-                class: "list-page__item-container",
-                style: "background-color: {colour}; color: {getTextColour};",
+                "m-if": "!messageIsArray",
+                style: "white-space: pre-wrap; {currentStyles}",
               },
-              [
-                element("div", { class: "list-page__item-title" }, [
-                  element("p", { class: "list-page__item-title-p" }, "{title}"),
-                  // element(
-                  //   "span",
-                  //   {
-                  //     class:
-                  //       "absolute top left padding-left smoke-text font-size-small line-height snow-text-shadow",
-                  //   },
-                  //   "{createdDate}"
-                  // ),
-                ]),
-                element("ul", { class: "list-page__item-options" }, [
-                  element(
-                    "li",
-                    {
-                      "m-if": "hasMessage",
-                      class: "relative width height-large",
-                    },
-                    element("span", {
-                      class: "fa fa-list absolute middle blueberry-text",
-                    })
-                  ),
+              template("renderedMessage")
+            ),
 
+            element(
+              "ul",
+              { "m-if": "messageIsArray", class: "flex list" },
+              element(
+                "li",
+                {
+                  "m-for": "currentMessage",
+                  "m-key": "_x",
+                  class: "padded",
+                  style: "white-space: pre-wrap;",
+                },
+                "{_x}"
+              )
+            ),
+          ]),
+
+          element(
+            "ul",
+            { class: "list list-page__list", "m-ref": "listElementRef" },
+            element(
+              "li",
+              {
+                "m-for": "items",
+                "m-key": "index",
+                class: "list-page__item",
+                "(click)": "selectItem",
+                draggable: "true",
+                "(dragstart)": "onDragStart",
+                "(dragover)": "onDragOver",
+                "(drop)": "onDrop",
+              },
+              element(
+                "div",
+                {
+                  class: "list-page__item-container",
+                  style: "background-color: {colour}; color: {getTextColour};",
+                },
+                [
                   element(
-                    "li",
-                    {
-                      "m-for": "itemActions",
-                      "m-key": "_i",
-                    },
-                    element(Button, {
-                      class: "empty square large",
-                      "[icon]": "icon",
-                      "[itemIndex]": "getIndex",
-                      "[onClick]": "action",
-                    })
+                    "div",
+                    { class: "list-page__item-title {showOverflowClass}" },
+                    [
+                      element(
+                        "span",
+                        {
+                          "m-if": "showOverflow",
+                          class: "list-page__item-title-overflow",
+                        },
+                        "..."
+                      ),
+                      element(
+                        "p",
+                        { class: "list-page__item-title-p" },
+                        "{title}"
+                      ),
+                    ]
                   ),
-                ]),
-              ]
+                  element("ul", { class: "list-page__item-options" }, [
+                    element(
+                      "li",
+                      {
+                        "m-if": "showItemsNumber",
+                        class: "relative",
+                      },
+                      element(
+                        "span",
+                        {
+                          class: "absolute middle blueberry-text bold",
+                        },
+                        "{itemsCount}"
+                      )
+                    ),
+
+                    element(
+                      "li",
+                      {
+                        "m-if": "hasMessage",
+                        class: "relative width height",
+                      },
+                      element("span", {
+                        class: "fa fa-list absolute middle blueberry-text",
+                      })
+                    ),
+
+                    element(
+                      "li",
+                      {
+                        "m-for": "itemActions",
+                        "m-key": "_i",
+                      },
+                      element(Button, {
+                        class: "empty square",
+                        "[icon]": "icon",
+                        "[itemIndex]": "getIndex",
+                        "[onClick]": "action",
+                      })
+                    ),
+                  ]),
+                ]
+              )
             )
-          )
-        ),
+          ),
+        ]),
       ])
     ),
   ]

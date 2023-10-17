@@ -15,6 +15,7 @@ import { Item } from "../models/Item.model";
 import { UndoConfig } from "../models/UndoConfig.model";
 
 import { colours } from "../data/colours.data";
+import { site } from "../data/site.data";
 
 const colour = colours[0].colour;
 
@@ -23,6 +24,7 @@ export const manageStore = new Store({
   message: "",
   colours,
   currentColour: colour,
+  actionButtons: new Resolver(() => site.actionButtons),
 
   setTitle(_, element) {
     manageStore.title = element.value;
@@ -94,3 +96,5 @@ export const manageStore = new Store({
     backToList();
   },
 });
+
+site.manageStore = manageStore;

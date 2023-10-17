@@ -17,13 +17,13 @@ export const Manage = component(
 
     manageStore.connect(this);
 
-    this.actionButtons = actionButtons;
-
-    this.oneach = async function () {
+    this.oninsert = async function () {
       actionButtons.forEach((actionButton) => {
         actionButton.active = false;
       });
+
       const isEdit = manageStore.editItem !== null;
+
       if (!isEdit) {
         // Create
         manageStore.title = "";
@@ -44,6 +44,7 @@ export const Manage = component(
           actionButton.active = true;
         });
       }
+
       await wait();
       this.manageFormElement?.title?.focus?.();
       this.manageFormElement["colour"].value = manageStore.currentColour;
@@ -64,6 +65,14 @@ export const Manage = component(
     getter(this, "getTheme", function () {
       return this.active ? "blueberry" : "snow";
     });
+
+    getter(this, "saveButtonLabel", () =>
+      manageStore.editItem !== null ? "Edit" : "Add"
+    );
+
+    getter(this, "saveButtonTheme", () =>
+      manageStore.editItem !== null ? "apple" : "blueberry"
+    );
   },
   { class: "constrain centred padding-bowl-large" },
 
@@ -154,8 +163,9 @@ export const Manage = component(
       element("div", { class: "grid-12" }, [
         element(Button, {
           type: "submit",
-          class: "blueberry large margin-right",
-          label: "Save",
+          class: "{saveButtonTheme} large margin-right",
+          "[label]": "saveButtonLabel",
+          "[saveButtonTheme]": "saveButtonTheme",
         }),
         element(Button, {
           class: "smoke large",
