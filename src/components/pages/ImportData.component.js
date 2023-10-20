@@ -5,15 +5,16 @@ import { Button } from "../common/Button.component";
 
 import { AltButtons } from "../additions/AltButtons.component";
 
-import { importStore } from "../../stores/import.store";
 import { wait } from "../../services/wait.service";
+
+import { importStore } from "../../stores/import.store";
 
 export const ImportData = component(
   "div",
   function () {
     importStore.connect(this);
 
-    this.oneach = function () {
+    this.oninsert = function () {
       importStore.importValue = "";
       (async () => {
         await wait();

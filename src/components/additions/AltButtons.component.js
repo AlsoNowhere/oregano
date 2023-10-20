@@ -15,6 +15,9 @@ export const AltButtons = component(
       if (this.type === "normal") {
         listStore.depthIndexing = path.get().slice(1);
         backToList();
+      } else if (this.type === "edit-heat-map") {
+        path.set(["heat-map", ...path.get().slice(1, -1)]);
+        refresh(appStore);
       } else {
         path.set([this.type, ...path.get().slice(1, -1)]);
         refresh(appStore);

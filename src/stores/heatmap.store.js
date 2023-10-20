@@ -38,7 +38,10 @@ export const heatmapStore = new Store({
         day: i + 1,
       }));
 
-    const initialDay = new Date(year, parseInt(month) - 1, 1).getDay() - 1;
+    let initialDay = new Date(year, parseInt(month) - 1, 1).getDay() - 1;
+    if (initialDay === -1) {
+      initialDay = 6;
+    }
 
     {
       let i = initialDay;

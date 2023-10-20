@@ -4,6 +4,8 @@ import { Line } from "basil";
 
 import { AltButtons } from "../additions/AltButtons.component";
 
+import { wait } from "../../services/wait.service";
+
 import { graphStore } from "../../stores/graph.store";
 
 const flattenData = (() => {
@@ -31,26 +33,25 @@ export const GraphView = component(
 
     this.svgElementRef = null;
 
-    this.oneach = function () {
-      setTimeout(() => {
-        const data = flattenData(graphStore.currentList);
-        const maxY = Math.ceil(
-          data.reduce((a, b) => (b.y > a ? b.y : a), -Infinity)
-        );
-        const minY = Math.floor(
-          data.reduce((a, b) => (b.y < a ? b.y : a), Infinity)
-        );
-        new Line(this.svgElementRef, data, {
-          xLabelsAreVertical: true,
-          borderColour: "lightgrey",
-          pointColour: "#3d7fe3",
-          lineColour: "#3d7fe3",
-          pointSize: 3,
-          tooltip: true,
-          maxY,
-          minY,
-        });
-      }, 0);
+    this.oninsert = async function () {
+      await wait();
+      const data = flattenData(graphStore.currentList);
+      const maxY = Math.ceil(
+        data.reduce((a, b) => (b.y > a ? b.y : a), -Infinity)
+      );
+      const minY = Math.floor(
+        data.reduce((a, b) => (b.y < a ? b.y : a), Infinity)
+      );
+      new Line(this.svgElementRef, data, {
+        xLabelsAreVertical: true,
+        borderColour: "lightgrey",
+        pointColour: "#3d7fe3",
+        lineColour: "#3d7fe3",
+        pointSize: 3,
+        tooltip: true,
+        maxY,
+        minY,
+      });
     };
   },
   null,

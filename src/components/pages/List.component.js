@@ -32,9 +32,9 @@ export const List = component(
       return colour?.textColour || colours[0].colour;
     });
 
-    getter(this, "hasLabel", function () {
-      return this.label !== null;
-    });
+    // getter(this, "hasLabel", function () {
+    //   return this.label !== null;
+    // });
 
     getter(this, "hasIcon", function () {
       return this.icon !== null;
@@ -71,7 +71,7 @@ export const List = component(
     });
 
     getter(this, "messageIsToTheSide", () =>
-      listStore.currentItem.actions.includes("message-to-side")
+      listStore.currentItem.actions?.includes("message-to-side")
         ? "flex flex-nowrap"
         : ""
     );
@@ -109,8 +109,8 @@ export const List = component(
                 "m-key": "id",
                 class: "padding-left",
               },
-              element("span", null, [
-                element("span", { "m-if": "hasLabel" }, "{label}"),
+              element("span", { "[title]": "title" }, [
+                // element("span", { "m-if": "hasLabel" }, "{title}"),
                 element("span", { "m-if": "hasIcon", class: "fa fa-{icon}" }),
               ])
             )
