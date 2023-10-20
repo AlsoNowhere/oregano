@@ -89,8 +89,8 @@ export const listStore = new Store({
     const actions = (listStore.currentItem.actions || []).map((x) => {
       const a = actionButtons.find(({ id }) => id === x);
       if (!a) return;
-      const { label, icon } = a;
-      return { label, icon };
+      const { title, icon, id } = a;
+      return { title, icon, id };
     });
     return actions.filter((x) => !!x);
   }),

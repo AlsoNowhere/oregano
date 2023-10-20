@@ -22,7 +22,7 @@ export const Heatmap = component(
         : "";
     });
 
-    this.oneach = async function () {
+    this.oninsert = async function () {
       await wait();
       const item = heatmapStore.currentItem;
       if (!item.actions.includes("heatmap")) {

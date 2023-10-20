@@ -4,19 +4,19 @@ import { AltButtons } from "../additions/AltButtons.component";
 
 import { wait } from "../../services/wait.service";
 import { path } from "../../services/path.service";
+import { getTodaysDate } from "../../services/get-todays-date.service";
 
 import { extractHeatmap } from "../../logic/extract-heatmap.logic";
 
 import { editHeatmapStore } from "../../stores/editheatmap.store";
 import { appStore } from "../../stores/app.store";
-import { getTodaysDate } from "../../services/get-todays-date.service";
 
 export const EditHeatmap = component(
   "div",
   function () {
     editHeatmapStore.connect(this);
 
-    this.oneach = async function () {
+    this.oninsert = async function () {
       await wait();
       const [date] = path.get().slice(-1);
       const item = editHeatmapStore.currentItem;
@@ -41,7 +41,7 @@ export const EditHeatmap = component(
   },
   null,
   [
-    element(AltButtons, { type: "heat-map" }),
+    element(AltButtons, { type: "edit-heat-map" }),
 
     element(
       "section",
