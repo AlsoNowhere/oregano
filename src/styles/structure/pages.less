@@ -1,9 +1,18 @@
 .pages {
-  padding-top: @size + 2rem;
+  height: 100vh;
+  padding-top: 3rem;
+  overflow-y: auto;
+  .scroll;
 }
 
 .page-title {
   margin: 0.5rem 0;
+}
+
+.common-page {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0;
 }
 
 .alt-buttons {
@@ -12,7 +21,7 @@
 }
 
 .other-content {
-  height: calc(100vh - 11rem);
+  flex-grow: 1;
   overflow-y: auto;
   .scroll;
 
