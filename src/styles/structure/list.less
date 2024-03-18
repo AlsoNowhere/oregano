@@ -1,7 +1,20 @@
 .list-page {
+  padding: 1rem 0;
+
   &__main-buttons {
     width: @pageWidth;
     .centred;
+
+    &-button {
+      width: 3rem;
+      height: 3rem;
+      .margin-right-small;
+      .font-size;
+
+      .icon {
+        font-size: 1.2rem;
+      }
+    }
   }
 
   .flex-nowrap {
@@ -22,8 +35,8 @@
 
   &__container {
     // height: calc(100vh - 16rem);
-    overflow-y: auto;
-    .scroll;
+    // overflow-y: auto;
+    // .scroll;
 
     &-items {
       width: @pageWidth;
@@ -80,10 +93,11 @@
           content: "";
           .absolute;
           top: 0;
-          left: 0;
-          width: 100%;
+          right: 0;
+          width: 1rem;
           height: 100%;
-          box-shadow: inset -5px 0 5px @snow;
+          // box-shadow: inset -5px 0 5px @snow;
+          background-image: linear-gradient(to right, transparent, #fff);
         }
       }
 
