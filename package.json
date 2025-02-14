@@ -1,6 +1,6 @@
 {
   "name": "oregano",
-  "version": "4.3.1",
+  "version": "5.0.1",
   "description": "",
   "main": "./electron/index.js",
   "scripts": {
@@ -9,27 +9,40 @@
     "build:js": "rollup --config",
     "watch:js": "rollup --config --watch",
     "build:css": "lessc ./src/styles/index.less ./dist/styles/index.css",
-    "watch:css": "less-watch-compiler ./src/styles ./dist/styles index.less"
+    "watch:css": "less-watch-compiler ./src/styles ./dist/styles index.less",
+    "server": "http-server",
+    "cy:open": "cypress open",
+    "cy:runAll": "cypress run --spec 'cypress/e2e/**/*.ts'"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "peerDependencies": {
+    "mint": "file:../../Mint3",
+    "oregano-core": "file:../Oregano-Core"
+  },
+  "dependencies": {
+    "basil": "file:../../Basil",
+    "chive": "file:../../Chive",
+    "sage": "file:../../Sage",
+    "thyme": "file:../../Thyme"
+  },
   "devDependencies": {
     "@electron/remote": "^2.0.9",
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^13.3.0",
+    "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^8.5.0",
-    "basil": "file:../../Basil",
-    "chive": "file:../../Chive",
+    "@types/cypress": "^1.1.6",
+    "@types/jest": "^29.5.14",
+    "cypress": "^13.17.0",
     "electron": "^22.0.2",
     "electron-packager": "^17.1.1",
+    "http-server": "^14.1.1",
     "less": "^4.1.3",
     "less-watch-compiler": "^1.16.3",
-    "mint": "file:../../Mint",
-    "oregano-core": "file:../Oregano-Core",
     "rollup": "^2.78.1",
-    "sage": "file:../../Sage",
-    "thyme": "file:../../Thyme",
+    "tslib": "^2.6.3",
     "typescript": "^4.8.3"
   }
 }
