@@ -1,67 +1,38 @@
 import _package from "../package.json";
 
-import { component, element, app, MintComponent, div } from "mint";
+import { component, node, app } from "mint";
+
+import { Route, Router, RouteType, TRouter } from "thyme";
 
 import {
+  OreganoAppComponent,
   Header,
-  List,
-  Manage,
-  ExportData,
-  ImportData,
-  TreeView,
-  GraphView,
-  Heatmap,
-  EditHeatmap,
-  Search,
-  appInit,
+  Content,
+  // Stores
   appStore,
+  allRoutes,
+  AllMainButtons,
+  AllSecondaryButtons,
+  Pages,
 } from "oregano-core";
 
-appStore.mainButtons = [
-  "Add",
-  "Edit",
-  "Level up",
-  "Up to root",
-  "Paste",
-  "Save",
-];
-appStore.secondaryButtons = [
-  "Undo",
-  "Export",
-  "Import",
-  "Tree",
-  "Search",
-  "Graph",
-  "Heatmap",
-];
-appStore.sessionStorageKey = "oregano-v4-key";
-appStore.version = _package.version;
+appStore.sessionStorageKey = "oregano-5-key";
 
-class AppComponent extends MintComponent {
-  constructor() {
-    super();
+const routes = allRoutes.map(
+  ([target, content]) => new Route({ target, type: RouteType["^"] }, content)
+);
 
-    this.oninsert = function () {
-      appInit();
-    };
+const App = component("main", OreganoAppComponent, null, [
+  node(Header, {
+    headerTitle: "Oregano",
+    version: _package.version,
+  }),
 
-    appStore.connect(this);
-  }
-}
-
-const App = component("main", AppComponent, null, [
-  element(Header),
-  div({ class: "pages" }, [
-    element(List, { mIf: "showList" }),
-    element(Manage, { mIf: "showManage" }),
-    element(ExportData, { mIf: "showExport" }),
-    element(ImportData, { mIf: "showImport" }),
-    element(TreeView, { mIf: "showTree" }),
-    element(GraphView, { mIf: "showGraph" }),
-    element(Heatmap, { mIf: "showHeatmap" }),
-    element(EditHeatmap, { mIf: "showEditHeatmap" }),
-    element(Search, { mIf: "showSearch" }),
+  node(Content, null, [
+    node(AllMainButtons),
+    node(AllSecondaryButtons),
+    node(Pages, null, node<TRouter>(Router, { routes })),
   ]),
 ]);
 
-app(document.body, {}, [element(App)]);
+app(document.body, {}, node(App));
