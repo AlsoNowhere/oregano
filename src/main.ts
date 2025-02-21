@@ -8,10 +8,9 @@ import {
   OreganoAppComponent,
   Header,
   Content,
-  // Stores
   appStore,
   allRoutes,
-  AllMainButtons,
+  AllPrimaryButtons,
   AllSecondaryButtons,
   Pages,
 } from "oregano-core";
@@ -29,7 +28,7 @@ const App = component("main", OreganoAppComponent, null, [
   }),
 
   node(Content, null, [
-    node(AllMainButtons),
+    node(AllPrimaryButtons),
     node(AllSecondaryButtons),
     node(Pages, null, node<TRouter>(Router, { routes })),
   ]),
