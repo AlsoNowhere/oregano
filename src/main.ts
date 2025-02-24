@@ -8,14 +8,15 @@ import {
   OreganoAppComponent,
   Header,
   Content,
-  appStore,
+  oreganoSettings,
   allRoutes,
   AllPrimaryButtons,
   AllSecondaryButtons,
   Pages,
 } from "oregano-core";
 
-appStore.sessionStorageKey = "oregano-5-key";
+oreganoSettings.sessionStorageKey = "oregano-5-key";
+oreganoSettings.breadcrumbs = true;
 
 const routes = allRoutes.map(
   ([target, content]) => new Route({ target, type: RouteType["^"] }, content)
