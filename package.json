@@ -1,6 +1,6 @@
 {
   "name": "oregano",
-  "version": "5.0.1",
+  "version": "5.0.2",
   "description": "",
   "main": "./electron/index.js",
   "scripts": {
@@ -31,7 +31,6 @@
     "@electron/remote": "^2.0.9",
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^13.3.0",
-    "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^8.5.0",
     "@types/cypress": "^1.1.6",
     "@types/jest": "^29.5.14",
