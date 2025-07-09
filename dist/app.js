@@ -2,7 +2,7 @@
   'use strict';
 
   var name = "oregano";
-  var version = "5.0.2";
+  var version = "5.0.4";
   var description = "";
   var main = "./electron/index.js";
   var scripts = {
@@ -21,7 +21,7 @@
   var author = "";
   var license = "ISC";
   var peerDependencies = {
-  	mint: "file:../../Mint3",
+  	mint: "file:../../Mint",
   	"oregano-core": "file:../Oregano-Core"
   };
   var dependencies = {
@@ -283,7 +283,9 @@
   const resolvePropertyLookup = (target, scope) => {
       var _a;
       if (target === "_children") {
-          return (_a = scope._mintBlueprint.contentFor_children) === null || _a === void 0 ? void 0 : _a.length;
+          const childrenContent = scope._mintBlueprint._childrenContent;
+          const contentLength = (_a = childrenContent === null || childrenContent === void 0 ? void 0 : childrenContent.length) !== null && _a !== void 0 ? _a : 0;
+          return contentLength > 0;
       }
       let _value = scope;
       const lookups = target.split(".");
@@ -408,8 +410,7 @@
 
   class MintNode {
       constructor(content, generate, render, refresh) {
-          this.content =
-              content instanceof Array ? content : content === null ? [] : [content];
+          this.content = content instanceof Array ? content : content === null ? [] : [content];
           this.generate = generate;
           this.render = render;
           this.refresh = refresh;
@@ -624,10 +625,10 @@
   // ** This is then replaced with cloned content from the Component definition.
   // ** This saved content can then be used to replace "_children" where it it defined.
   const getContent = (blueprint) => {
-      const { parentBlueprint, contentFor_children } = blueprint;
+      const { parentBlueprint, _childrenContent } = blueprint;
       // ** If the content is valid then return this.
-      if (contentFor_children !== undefined)
-          return contentFor_children;
+      if (_childrenContent !== undefined)
+          return _childrenContent;
       // ** If the parent does not have valid content then pass undefined, which will be ignored to prevent errors.
       if (parentBlueprint === null)
           return;
@@ -636,9 +637,10 @@
   };
   const resolveChildBlueprints = (blueprint, childBlueprints, isSVG) => {
       const { scope, _rootScope } = blueprint;
+      let childrenContent;
       // ** Here we get the content that should be used to replace "_children".
       // ** This is pre Blueprint generated rated.
-      const childrenContent = getContent(blueprint);
+      childrenContent = getContent(blueprint);
       if (childrenContent !== undefined) {
           // ** If this is the keyword "_children" then replace this with childrenContent.
           // ** As these are blueprints then they will need to be cloned and unique at the render phase.
@@ -654,7 +656,7 @@
                       scope,
                       parentBlueprint: blueprint,
                       _rootScope,
-                      isSVG,
+                      isSVG
                   });
                   // ** Now we insert the Blueprints, replacing "_children".
                   childBlueprints.splice(i, 0, ..._children);
@@ -783,13 +785,14 @@
   }
 
   class ComponentBlueprint extends Blueprint {
-      constructor({ mintNode, fragment, element, orderedProps, props, orderedAttributes, attributes, scope, parentBlueprint, collection, childBlueprints, _rootScope, contentFor_children, }) {
+      constructor({ mintNode, fragment, element, orderedProps, props, orderedAttributes, attributes, scope, parentBlueprint, collection, childBlueprints, _rootScope, _childrenContent }) {
           super({
               mintNode,
               scope,
               parentBlueprint,
-              _rootScope,
+              _rootScope
           });
+          this.isComponent = true;
           if (!!fragment)
               this.fragment = fragment;
           if (!!element)
@@ -802,28 +805,26 @@
               this.collection = collection;
           if (!!childBlueprints)
               this.childBlueprints = childBlueprints;
-          if (!!contentFor_children)
-              this.contentFor_children = contentFor_children;
+          if (!!_childrenContent)
+              this._childrenContent = _childrenContent;
           if (element instanceof SVGElement)
               this.isSVG = true;
           this._dev = "Component";
       }
   }
 
-  const generateComponentBlueprint = ({ node, orderedProps, props, scope: parentScope, parentBlueprint, _rootScope, isSVG, useGivenScope, }) => {
+  const generateComponentBlueprint = ({ node, orderedProps, props, scope: parentScope, parentBlueprint, _rootScope, isSVG, useGivenScope }) => {
       var _a, _b;
-      // const { mintNode, content: _children } = node;
       const { mintNode, content: _children } = node;
       fixProps(mintNode.attributes);
       const mintComponent = mintNode;
       const { element, content } = mintComponent;
       const attributes = cloneProps({
-          props: mintComponent.attributes,
+          props: mintComponent.attributes
       });
       const orderedAttributes = resolvePropsOrder(attributes);
       // <@ REMOVE FOR PRODUCTION
-      if (!(mintComponent.scope instanceof Function) &&
-          mintComponent.scope !== null) {
+      if (!(mintComponent.scope instanceof Function) && mintComponent.scope !== null) {
           throw new Error(`${MINT_ERROR} Mint Component -- scope -- must pass a constructor function for Component scope argument (second argument) i.e component("div", function(){}`);
       }
       // @>
@@ -878,7 +879,7 @@
           parentBlueprint,
           _rootScope,
           isSVG,
-          isComponent: true,
+          isComponent: true
       };
       {
           // ** Here we resolve the props of the Component.
@@ -910,28 +911,28 @@
           attributes,
           scope: componentScope,
           parentBlueprint,
-          _rootScope,
+          _rootScope
       });
       if (!!_children) {
-          blueprint.contentFor_children = [];
+          blueprint._childrenContent = [];
           for (let x of _children) {
-              blueprint.contentFor_children.push(cloneContent(x));
+              blueprint._childrenContent.push(cloneContent(x));
           }
       }
       componentScope._mintBlueprint = blueprint;
       /* Dev */
-      // _DevLogger_("GENERATE", "COMPONENT", blueprint, parentBlueprint);
+      // _DevLogger_("GENERATE", "COMPONENT", blueprint);
       // ** Clone the content so that each Component has unique content from the original definition.
-      const _content = [];
+      const clonedContent = [];
       for (let x of content) {
-          _content.push(cloneContent(x));
+          clonedContent.push(cloneContent(x));
       }
       const _childBlueprints = generateBlueprints({
-          nodes: _content,
+          nodes: clonedContent,
           scope: componentScope,
           parentBlueprint: blueprint,
           _rootScope,
-          isSVG,
+          isSVG
       });
       // ** Check if the children content contains the "_children" keyword.
       // ** Using this allows the content of this child blueprint to use custom content passed into this parent Component.
@@ -1063,10 +1064,17 @@
           }
       }
   };
-  const renderAttributes = (element, orderedAttributes, attributes, scope) => {
+  const renderAttributes = (
+  // element: TElement,
+  // orderedAttributes: null | Array<string>,
+  // attributes: IAttributes,
+  // scope: Object
+  blueprint) => {
+      const { orderedAttributes, attributes, scope } = blueprint;
+      const element = blueprint.element;
       /* DEV */
       // _DevLogger_("RENDER", "ATTRIBUTES", orderedAttributes, { element });
-      if (orderedAttributes === null)
+      if (attributes === undefined || orderedAttributes === null)
           return;
       // <@ REMOVE FOR PRODUCTION
       if (orderedAttributes === undefined)
@@ -1092,13 +1100,14 @@
       /* Dev */
       // _DevLogger_("RENDER", "COMPONENT", blueprint);
       var _a, _b, _c, _d, _e;
-      const { element, orderedAttributes, attributes, scope, collection, childBlueprints, } = blueprint;
+      const { element, scope, collection, childBlueprints } = blueprint;
       // ** LIFECYCLE CALL
       (_a = scope.oninit) === null || _a === void 0 ? void 0 : _a.call(scope, { scope });
       (_b = scope.oninsert) === null || _b === void 0 ? void 0 : _b.call(scope, { scope });
       (_c = scope.oneach) === null || _c === void 0 ? void 0 : _c.call(scope, { scope });
       if (element !== undefined) {
-          renderAttributes(element, orderedAttributes, attributes, scope);
+          // renderAttributes(element, orderedAttributes, attributes, scope);
+          renderAttributes(blueprint);
       }
       // ** Here we add the Component Element to the parentElement, if there is a Component Element.
       if (element !== undefined) {
@@ -1107,9 +1116,7 @@
       // ** Here we add the collection of Component Elements if there is a collection.
       if (collection !== undefined) {
           for (let x of collection) {
-              renderBlueprints([x], parentElement, parentChildBlueprints, [
-                  blueprintIndex,
-              ]);
+              renderBlueprints([x], parentElement, parentChildBlueprints, [blueprintIndex]);
           }
       }
       // ** Here we handle the children of this Component, if it has any.
@@ -1263,32 +1270,20 @@
   };
 
   const resolveMAttributesOnRefresh = (blueprint, parentElement, options) => {
-      const { orderedProps = [], props = {}, orderedAttributes = [], attributes = {}, } = blueprint;
+      const { orderedProps = [], props = {}, orderedAttributes = [], attributes = {} } = blueprint;
       let shouldExit = { condition: false, value: undefined };
       for (let key of orderedProps) {
           const property = props[key];
           const resolver = property.onRefresh;
-          if (shouldExit.condition === false &&
-              property instanceof MintAttribute &&
-              resolver instanceof Function) {
-              shouldExit = resolver.apply(property, [
-                  blueprint,
-                  parentElement,
-                  options,
-              ]);
+          if (shouldExit.condition === false && property instanceof MintAttribute && resolver instanceof Function) {
+              shouldExit = resolver.apply(property, [blueprint, parentElement, options]);
           }
       }
       for (let key of orderedAttributes) {
           const property = attributes[key];
           const resolver = property.onRefresh;
-          if (shouldExit.condition === false &&
-              property instanceof MintAttribute &&
-              resolver instanceof Function) {
-              shouldExit = resolver.apply(property, [
-                  blueprint,
-                  parentElement,
-                  options,
-              ]);
+          if (shouldExit.condition === false && property instanceof MintAttribute && resolver instanceof Function) {
+              shouldExit = resolver.apply(property, [blueprint, parentElement, options]);
           }
       }
       return shouldExit;
@@ -1382,15 +1377,15 @@
       }
   }
 
-  const generateMTemplate = ({ node, scope, parentBlueprint, _rootScope, }) => {
-      const mintNode = node.mintNode;
+  const generateMTemplate = ({ node, scope, parentBlueprint, _rootScope }) => {
+      const { mintNode } = node;
       const mintTemplate = mintNode;
       return new TemplateBlueprint({
           mintNode: mintTemplate,
           templateState: null,
           scope,
           parentBlueprint,
-          _rootScope,
+          _rootScope
       });
   };
 
@@ -1564,13 +1559,14 @@
   };
 
   class ElementBlueprint extends Blueprint {
-      constructor({ mintNode, fragment, element, orderedAttributes, attributes, scope, parentBlueprint, _rootScope, collection, childBlueprints, }) {
+      constructor({ mintNode, fragment, element, orderedAttributes, attributes, scope, parentBlueprint, _rootScope, collection, childBlueprints }) {
           super({
               mintNode,
               scope,
               parentBlueprint,
-              _rootScope,
+              _rootScope
           });
+          this.isComponent = false;
           if (!!fragment)
               this.fragment = fragment;
           if (!!element)
@@ -1674,11 +1670,12 @@
   };
 
   const renderElementBlueprint = (blueprint, parentElement, parentChildBlueprints, blueprintIndex) => {
-      const { element, orderedAttributes, attributes, scope, collection, childBlueprints, } = blueprint;
+      const { element, collection, childBlueprints } = blueprint;
       /* Dev */
       // _DevLogger_("RENDER", "ELEMENT", blueprint, blueprintIndex);
       if (element !== undefined) {
-          renderAttributes(element, orderedAttributes, attributes, scope);
+          // renderAttributes(element, orderedAttributes, attributes, scope);
+          renderAttributes(blueprint);
       }
       // ** Here we add the Element to the parentElement, if there is an Element.
       if (element !== undefined) {
@@ -1687,9 +1684,7 @@
       // ** Here we add the collection of Elements if there is a collection.
       if (collection !== undefined) {
           for (let x of collection) {
-              renderBlueprints([x], parentElement, parentChildBlueprints, [
-                  blueprintIndex,
-              ]);
+              renderBlueprints([x], parentElement, parentChildBlueprints, [blueprintIndex]);
           }
       }
       // ** Here we handle the children of this Element, if it has any.
@@ -1739,7 +1734,12 @@
       }
   }
 
-  const node = (element, props = null, initialContent = null) => {
+  function node(element, props = null, initialContent = null) {
+      // export const node = <T extends Object>(
+      //   element: string | MintComponent | MintTemplate,
+      //   props: null | (T & IProps) = null,
+      //   initialContent: null | TRawContent = null
+      // ): CreateNode<T, MintElement | MintComponent | MintTemplate> => {
       // <@ REMOVE FOR PRODUCTION
       if (element === "<>" && props !== null) {
           const acceptableProps = ["mIf", "mFor", "mKey"];
@@ -1763,52 +1763,28 @@
           // (element as MintComponent)._children = content;
       }
       return new CreateNode(mintNode, props, content);
-  };
-
-  class Store {
-      constructor(initialData) {
-          if (!(initialData instanceof Object)) {
-              throw "You must provide an Object to create a new Store.";
-          }
-          const entries = Object.entries(initialData);
-          for (let [key, value] of entries) {
-              if (value instanceof ScopeTransformer) {
-                  value.transform(this, key);
-              }
-              else {
-                  this[key] = value;
-              }
-          }
-          this._component = null;
-          this._keys = Object.keys(initialData);
-          this._data = initialData;
-          Object.seal(this);
-      }
-      connect(scope) {
-          this._component = scope;
-          scope._store = this;
-          for (let key of this._keys) {
-              const value = this._data[key];
-              if (value instanceof ScopeTransformer) {
-                  value.transform(scope, key);
-              }
-              else {
-                  Object.defineProperty(scope, key, {
-                      get: () => this[key],
-                      set: (_value) => (this[key] = _value),
-                  });
-              }
-          }
-      }
   }
 
-  const externalRefreshBlueprint = (scopeOrBlueprint) => {
-      var _a;
-      const blueprint = scopeOrBlueprint instanceof Blueprint
-          ? scopeOrBlueprint
-          : scopeOrBlueprint instanceof Store
-              ? (_a = scopeOrBlueprint._component) === null || _a === void 0 ? void 0 : _a._mintBlueprint
-              : scopeOrBlueprint._mintBlueprint;
+  const externalRefreshBlueprint = (scopeOrBlueprintOrStore) => {
+      let blueprint = undefined;
+      const { _mintBlueprint } = scopeOrBlueprintOrStore;
+      const { _component } = scopeOrBlueprintOrStore;
+      // ** Passed a Blueprint directly
+      if (scopeOrBlueprintOrStore instanceof Blueprint) {
+          blueprint = scopeOrBlueprintOrStore;
+      }
+      // ** Passed IScope
+      else if (!!_mintBlueprint) {
+          blueprint = _mintBlueprint;
+      }
+      // ** Passed Store
+      else if (_component !== undefined) {
+          // ** If this Store is not currently connected to a Component then do nothing.
+          if (_component === null) {
+              return;
+          }
+          blueprint = _component._mintBlueprint;
+      }
       // <@ REMOVE FOR PRODUCTION
       if (blueprint === undefined) {
           throw new Error(`${MINT_ERROR} refresh called using an invalid scope. Blueprint is undefined.`);
@@ -1928,7 +1904,7 @@
       }
   }
 
-  const generateMIf = ({ mIfInstance, _ifValue, node, orderedProps, props, parentScope, parentBlueprint, _rootScope, isSVG, }) => {
+  const generateMIf = ({ mIfInstance, _ifValue, node, orderedProps, props, parentScope, parentBlueprint, _rootScope, isSVG }) => {
       const { mintNode, content } = node;
       const mintElement = mintNode;
       // <@ REMOVE FOR PRODUCTION
@@ -1941,7 +1917,7 @@
       }
       const inverse = _ifValue.charAt(0) === "!";
       const ifValue = inverse ? _ifValue.substring(1) : _ifValue;
-      const result = resolvePropertyLookup(ifValue, parentScope);
+      const result = !!resolvePropertyLookup(ifValue, parentScope);
       const state = inverse ? !result : !!result;
       mIfInstance._mIf = {
           inverse,
@@ -1949,7 +1925,7 @@
           state,
           scope: parentScope,
           blueprinted: state,
-          mintNode: mintNode,
+          mintNode: mintNode
       };
       /* Dev */
       // _DevLogger_("GENERATE", "mIf", mIfInstance._mIf);
@@ -1962,7 +1938,7 @@
               parentBlueprint,
               _rootScope,
               content,
-              isSVG,
+              isSVG
           });
           /* Dev */
           // _DevLogger_("GENERATE", "mIf", that.blueprint, parentBlueprint);
@@ -2003,7 +1979,7 @@
           scope,
           parentBlueprint,
           _rootScope,
-          isSVG,
+          isSVG
       });
       // ** We need to replace this previous IfBlueprint as its not longer the correct context.
       if (parentBlueprint !== null) {
@@ -2043,10 +2019,7 @@
       }
       mIf.blueprinted = true;
       const { blueprintList, blueprintIndex } = getBlueprintIndex(newBlueprint);
-      parentElement !== undefined &&
-          renderBlueprints([newBlueprint], parentElement, blueprintList, [
-              blueprintIndex,
-          ]);
+      parentElement !== undefined && renderBlueprints([newBlueprint], parentElement, blueprintList, [blueprintIndex]);
       return { newState, newlyInserted };
   };
   const fromFalseToTrue = (blueprint, parentElement, parentBlueprintList, blueprintIndex) => {
@@ -2056,13 +2029,16 @@
       }
       if (collection !== undefined) {
           for (let x of collection) {
-              renderBlueprints([x], parentElement, parentBlueprintList, [
-                  blueprintIndex,
-              ]);
+              renderBlueprints([x], parentElement, parentBlueprintList, [blueprintIndex]);
           }
       }
   };
   const fromTrueToFalse = (blueprint) => {
+      var _a;
+      const { isComponent, scope } = blueprint;
+      if (isComponent) {
+          (_a = scope.onremove) === null || _a === void 0 ? void 0 : _a.call(scope, { scope });
+      }
       removeList([blueprint]);
   };
   const stateShift = (blueprint, parentElement, parentBlueprintList, blueprintIndex, mIf) => {
@@ -2085,7 +2061,7 @@
                   return fromFalseNotBlueprintedToTrue(blueprint, parentElement, {
                       mIf,
                       newState,
-                      newlyInserted,
+                      newlyInserted
                   });
               }
               else {
@@ -2353,7 +2329,7 @@
 
   const handleErrorsAndWarnings = (blueprint, mFor) => {
       var _a, _b;
-      const { nodeToClone, orderedProps, props, forListBlueprints, parentBlueprint, _rootScope, isSVG, } = blueprint;
+      const { nodeToClone, orderedProps, props, forListBlueprints, parentBlueprint, _rootScope, isSVG } = blueprint;
       const { blueprintIndex } = getBlueprintIndex(blueprint);
       const childBlueprints = (_a = parentBlueprint === null || parentBlueprint === void 0 ? void 0 : parentBlueprint.childBlueprints) !== null && _a !== void 0 ? _a : _rootScope._rootChildBlueprints;
       const parentScope = (_b = parentBlueprint === null || parentBlueprint === void 0 ? void 0 : parentBlueprint.scope) !== null && _b !== void 0 ? _b : _rootScope;
@@ -2394,7 +2370,7 @@
           childBlueprints,
           parentBlueprint,
           _rootScope,
-          isSVG,
+          isSVG
       };
   };
   const changeElementPosition = (forRender, requiredIndex, forRenders, allElements, options) => {
@@ -2434,8 +2410,8 @@
       }
   };
   const refreshMFor = (blueprint, { _mFor, newlyInserted }) => {
-      var _a;
-      const { forKey, forData, blueprintIndex, parentElement, nodeToClone, orderedProps, props, parentScope, parentBlueprint, forListBlueprints, childBlueprints, _rootScope, isSVG, } = handleErrorsAndWarnings(blueprint, _mFor);
+      var _a, _b, _c;
+      const { forKey, forData, blueprintIndex, parentElement, nodeToClone, orderedProps, props, parentScope, parentBlueprint, forListBlueprints, childBlueprints, _rootScope, isSVG } = handleErrorsAndWarnings(blueprint, _mFor);
       _mFor.forData = forData;
       const newList = forData;
       _mFor.oldForDataLength = newList.length;
@@ -2481,7 +2457,7 @@
               forRenders.push(x);
           }
           else {
-              forRenders.push(generatemForBlueprint(nodeToClone, parentScope, orderedProps, props, nodeToClone.content, parentBlueprint, x, i, _rootScope, isSVG));
+              forRenders.push(generatemForBlueprint(nodeToClone, parentScope, orderedProps, props, _mFor._children, parentBlueprint, x, i, _rootScope, isSVG));
           }
       }
       _mFor.currentForRenders = forRenders;
@@ -2499,12 +2475,18 @@
       }
       // ** Cycle through old list and if its not on the new list then remove this element.
       for (let currentRender of forListBlueprints) {
-          if (!newCurrentForRenders.includes(currentRender) &&
-              currentRender instanceof ElementBlueprint) {
-              const element = currentRender.element;
-              (_a = element === null || element === void 0 ? void 0 : element.parentElement) === null || _a === void 0 ? void 0 : _a.removeChild(element);
+          if (!newCurrentForRenders.includes(currentRender)) {
+              if (!currentRender.fragment) {
+                  const element = currentRender.element;
+                  (_a = element === null || element === void 0 ? void 0 : element.parentElement) === null || _a === void 0 ? void 0 : _a.removeChild(element);
+              }
+              else {
+                  const collection = currentRender.collection;
+                  removeList(collection);
+              }
           }
       }
+      // ** Cycle through new list and if its not on the old list then add this element.
       for (let targetRender of forRenders) {
           if (!forListBlueprints.includes(targetRender)) {
               const element = targetRender.element;
@@ -2518,12 +2500,11 @@
           if (mintNode === null)
               continue;
           if (!forListBlueprints.includes(targetRender)) {
-              mintNode.render(targetRender, parentElement, childBlueprints, blueprintIndex);
+              (_b = mintNode.render) === null || _b === void 0 ? void 0 : _b.call(mintNode, targetRender, parentElement, childBlueprints, blueprintIndex);
           }
           else {
-              const _refresh = mintNode.refresh;
-              _refresh(targetRender, parentElement, {
-                  newlyInserted,
+              (_c = mintNode.refresh) === null || _c === void 0 ? void 0 : _c.call(mintNode, targetRender, parentElement, {
+                  newlyInserted
               });
           }
       }
@@ -2538,15 +2519,15 @@
       rearrangeElements(forRenders, {
           childBlueprints,
           parentElement,
-          blueprintIndex,
+          blueprintIndex
       });
       return {
           condition: true,
-          value: blueprint,
+          value: blueprint
       };
   };
 
-  const createmForObject = ({ forKey, forValue, mForType, nodeToClone, _children, parentScope, orderedProps, props, parentBlueprint, _rootScope, isSVG, }) => {
+  const createmForObject = ({ forKey, forValue, mForType, nodeToClone, _children, parentScope, orderedProps, props, parentBlueprint, _rootScope, isSVG }) => {
       const initialForData = resolvePropertyLookup(forValue, parentScope);
       if (!(initialForData instanceof Array) || initialForData === undefined) {
           throw new Error(`${MINT_ERROR} Must pass in an Array or undefined to mFor (mFor: "${forValue}")`);
@@ -2578,9 +2559,10 @@
           currentForRenders,
           oldForDataLength: forData.length,
           mForType,
+          _children
       };
   };
-  const generateMFor = ({ mForInstance, forValue, node, orderedProps, props, _children, parentScope, parentBlueprint, _rootScope, isSVG, }) => {
+  const generateMFor = ({ mForInstance, forValue, node, orderedProps, props, _children, parentScope, parentBlueprint, _rootScope, isSVG }) => {
       var _a;
       const nodeToClone = node.mintNode;
       if (mForInstance.generated)
@@ -2624,7 +2606,7 @@
           props,
           parentBlueprint,
           _rootScope,
-          isSVG,
+          isSVG
       });
       const forListBlueprints = mForInstance._mFor.currentForRenders;
       const runRefresh = (blueprint, options) => {
@@ -2643,11 +2625,11 @@
           _rootScope,
           forListBlueprints,
           // collection: collection as Array<Blueprint>,
-          isSVG: isSVG || undefined,
+          isSVG: isSVG || undefined
       });
       return {
           condition: true,
-          value: mForInstance.blueprint,
+          value: mForInstance.blueprint
       };
   };
 
@@ -2753,6 +2735,43 @@
       return { mRef: new MintRef(refValue) };
   };
 
+  class Store {
+      constructor(initialData) {
+          if (!(initialData instanceof Object)) {
+              throw "You must provide an Object to create a new Store.";
+          }
+          const entries = Object.entries(initialData);
+          for (let [key, value] of entries) {
+              if (value instanceof ScopeTransformer) {
+                  value.transform(this, key);
+              }
+              else {
+                  this[key] = value;
+              }
+          }
+          this._component = null;
+          this._keys = Object.keys(initialData);
+          this._data = initialData;
+          Object.seal(this);
+      }
+      connect(scope) {
+          this._component = scope;
+          scope._store = this;
+          for (let key of this._keys) {
+              const value = this._data[key];
+              if (value instanceof ScopeTransformer) {
+                  value.transform(scope, key);
+              }
+              else {
+                  Object.defineProperty(scope, key, {
+                      get: () => this[key],
+                      set: (_value) => (this[key] = _value),
+                  });
+              }
+          }
+      }
+  }
+
   const _get = (target, value) => {
       let output = target;
       const trail = value.split(".");
@@ -2767,7 +2786,7 @@
       constructor(callback) {
           super((scope, key) => {
               Object.defineProperty(scope, key, {
-                  get: this.callback,
+                  get: this.callback
               });
           });
           if (callback instanceof Function) {
@@ -2920,13 +2939,16 @@
       constructor() {
           super();
           this.type = "text";
+          this.class = "";
           this.style = "";
-          this.onKeyDown = null;
+          // this.onKeyDown = null;
           this.onInput = null;
-          this.onFocus = null;
-          this.onBlur = null;
+          // this.onFocus = null;
+          // this.onBlur = null;
+          this.extendField = {};
           this._labelClass = new Resolver(function () {
-              return this.labelClass + (this.large ? " large" : "");
+              var _a;
+              return ((_a = this.labelClass) !== null && _a !== void 0 ? _a : "") + (this.large ? " large" : "");
           });
           this._inputClass = new Resolver(function () {
               return this.class + (this.large ? " large" : "");
@@ -2944,23 +2966,9 @@
   }
   const FieldInput$1 = component("label", FieldInputComponent$1, { class: "{_labelClass} {isRequired}", "[style]": "labelStyles" }, [
       node("span", { mIf: mIf("hasLabelAbove") }, "{label}"),
-      node("input", {
-          "[type]": "type",
-          "[name]": "name",
-          "[value]": "value",
-          "[checked]": "checked",
-          "[class]": "_inputClass",
-          "[style]": "style",
-          "[placeholder]": "placeholder",
-          "[required]": "required",
-          "[readonly]": "readonly",
-          "[id]": "id",
-          "(keydown)": "onKeyDown",
-          "(input)": "onInput",
-          "(focus)": "onFocus",
-          "(blur)": "onBlur",
-          mRef: mRef("ref"),
-      }),
+      node("input", Object.assign(Object.assign({ "[type]": "type", "[name]": "name", "[value]": "value", "[checked]": "checked", "[class]": "_inputClass", "[style]": "style", "[placeholder]": "placeholder", "[required]": "required", "[readonly]": "readonly", "[id]": "id", 
+          // "(keydown)": "onKeyDown",
+          "(input)": "onInput" }, mExtend("extendField")), mRef("ref"))),
       node("span", { mIf: mIf("hasLabelBeside") }, "{label}"),
   ]);
 
@@ -3002,6 +3010,7 @@
   class FieldSelectComponent$1 extends MintScope {
       constructor() {
           super();
+          this.class = "";
           this.style = "";
           this.options = [];
           this.onInput = null;
@@ -3062,8 +3071,9 @@
   class FieldTextareaComponent$1 extends MintScope {
       constructor() {
           super();
-          this.resize = false;
+          this.class = "";
           this.style = "";
+          this.resize = false;
           this.onInput = null;
           this.hasLabel = new Resolver(function () {
               return !!this.label;
@@ -3078,17 +3088,7 @@
   }
   const FieldTextarea$1 = component("label", FieldTextareaComponent$1, { class: "{labelClass} {isRequired}" }, [
       node("span", { mIf: mIf("hasLabel") }, "{label}"),
-      node("textarea", {
-          "[name]": "name",
-          "[value]": "value",
-          "[class]": "class",
-          "[placeholder]": "placeholder",
-          "[style]": "getStyles",
-          "[readonly]": "getReadonly",
-          "[id]": "id",
-          "(input)": "onInput",
-          mRef: mRef("ref"),
-      }),
+      node("textarea", Object.assign(Object.assign({ "[name]": "name", "[value]": "value", "[class]": "class", "[placeholder]": "placeholder", "[style]": "getStyles", "[readonly]": "getReadonly", "[id]": "id", "(input)": "onInput" }, mExtend("extendField")), { mRef: mRef("ref") })),
   ]);
 
   const passProps$1 = {
@@ -3107,10 +3107,11 @@
       "[required]": "required",
       "[readonly]": "readonly",
       "[id]": "id",
-      "[onKeyDown]": "onKeyDown",
+      // "[onKeyDown]": "onKeyDown",
       "[onInput]": "onInput",
-      "[onFocus]": "onFocus",
-      "[onBlur]": "onBlur",
+      // "[onFocus]": "onFocus",
+      // "[onBlur]": "onBlur",
+      "[extendField]": "extendField",
       "[ref]": "ref",
   };
   class FieldComponent$1 extends MintScope {
@@ -3123,7 +3124,8 @@
           this.onInput = null;
           this.onFocus = null;
           this.onBlur = null;
-          this.extend = {};
+          this.extendScope = {};
+          this.extendField = {};
           this.ref = null;
           this.isInput = new Resolver(function () {
               const inValidTypes = [
@@ -3153,24 +3155,13 @@
       }
   }
   component("<>", FieldComponent$1, { "[class]": "wrapperClasses" }, [
-      node(FieldInput$1, Object.assign({ mIf: mIf("isInput"), mExtend: mExtend("extend") }, passProps$1)),
-      node(FieldCheckbox$1, Object.assign({ mIf: mIf("isCheckbox"), mExtend: mExtend("extend") }, passProps$1)),
-      node(FieldRadio$1, Object.assign({ mIf: mIf("isRadio"), mExtend: mExtend("extend") }, passProps$1)),
-      node(FieldFieldset$1, Object.assign(Object.assign({ mIf: mIf("isFieldSet"), mExtend: mExtend("extend") }, passProps$1), { "[options]": "options" })),
-      node(FieldTextarea$1, Object.assign(Object.assign({ mIf: mIf("isTextarea"), mExtend: mExtend("extend") }, passProps$1), { "[resize]": "resize" })),
-      node(FieldSelect$1, Object.assign(Object.assign({ mIf: mIf("isSelect"), mExtend: mExtend("extend") }, passProps$1), { "[options]": "options" })),
+      node(FieldInput$1, Object.assign(Object.assign({ mIf: mIf("isInput") }, mExtend("extendScope")), passProps$1)),
+      node(FieldCheckbox$1, Object.assign(Object.assign({ mIf: mIf("isCheckbox") }, mExtend("extendScope")), passProps$1)),
+      node(FieldRadio$1, Object.assign(Object.assign({ mIf: mIf("isRadio") }, mExtend("extendScope")), passProps$1)),
+      node(FieldFieldset$1, Object.assign(Object.assign(Object.assign({ mIf: mIf("isFieldSet") }, mExtend("extendScope")), passProps$1), { "[options]": "options" })),
+      node(FieldTextarea$1, Object.assign(Object.assign(Object.assign({ mIf: mIf("isTextarea") }, mExtend("extendScope")), passProps$1), { "[resize]": "resize" })),
+      node(FieldSelect$1, Object.assign(Object.assign(Object.assign({ mIf: mIf("isSelect") }, mExtend("extendScope")), passProps$1), { "[options]": "options" })),
   ]);
-
-  const modalTime$1 = 500;
-
-  const closeModal$1 = (target, prop) => {
-      target[prop] = "open closing";
-      externalRefresh(target);
-      setTimeout(() => {
-          target[prop] = "";
-          externalRefresh(target);
-      }, modalTime$1);
-  };
 
   class ModalComponent$1 extends MintScope {
       constructor() {
@@ -3178,25 +3169,31 @@
           this.state = "";
           this.theme = "smoke";
           this.class = "";
+          this.style = "";
           this.hasTitle = new Resolver(function () {
               return this.title !== undefined;
           });
           this.clickOnBackground = function () {
-              if (this.closeOnBackgroundClick !== true)
-                  return;
-              if (this._store instanceof Store &&
-                  typeof this.storeTarget === "string") {
-                  closeModal$1(this._store, this.storeTarget);
+              if (this.closeOnBackgroundClick instanceof Function) {
+                  this.closeOnBackgroundClick();
               }
-              else {
-                  closeModal$1(this, "state");
+              // if (!(this.closeOnBackgroundClick instanceof Function)) return;
+              // if (this._store instanceof Store && typeof this.storeTarget === "string") {
+              //   closeModal(this._store, this.storeTarget);
+              // } else {
+              //   closeModal(this, "state");
+              // }
+          };
+          this.clickOnContent = function (event) {
+              if (this.closeOnBackgroundClick instanceof Function) {
+                  event.stopPropagation();
               }
           };
       }
   }
-  component("article", ModalComponent$1, { class: "modal {state}", "(click)": "clickOnBackground" }, node("div", { class: "modal__content {class}" }, [
+  component("article", ModalComponent$1, { class: "modal {state}", "(click)": "clickOnBackground" }, node("div", { class: "modal__content {class}", "[style]": "style", "(click)": "clickOnContent" }, [
       node("header", { mIf: mIf("hasTitle"), class: "modal__header {theme}" }, node("h2", null, "{title}")),
-      "_children",
+      "_children"
   ]));
 
   const exact$1 = (target, hash) => {
@@ -4028,13 +4025,16 @@
       constructor() {
           super();
           this.type = "text";
+          this.class = "";
           this.style = "";
-          this.onKeyDown = null;
+          // this.onKeyDown = null;
           this.onInput = null;
-          this.onFocus = null;
-          this.onBlur = null;
+          // this.onFocus = null;
+          // this.onBlur = null;
+          this.extendField = {};
           this._labelClass = new Resolver(function () {
-              return this.labelClass + (this.large ? " large" : "");
+              var _a;
+              return ((_a = this.labelClass) !== null && _a !== void 0 ? _a : "") + (this.large ? " large" : "");
           });
           this._inputClass = new Resolver(function () {
               return this.class + (this.large ? " large" : "");
@@ -4052,23 +4052,9 @@
   }
   const FieldInput = component("label", FieldInputComponent, { class: "{_labelClass} {isRequired}", "[style]": "labelStyles" }, [
       node("span", { mIf: mIf("hasLabelAbove") }, "{label}"),
-      node("input", {
-          "[type]": "type",
-          "[name]": "name",
-          "[value]": "value",
-          "[checked]": "checked",
-          "[class]": "_inputClass",
-          "[style]": "style",
-          "[placeholder]": "placeholder",
-          "[required]": "required",
-          "[readonly]": "readonly",
-          "[id]": "id",
-          "(keydown)": "onKeyDown",
-          "(input)": "onInput",
-          "(focus)": "onFocus",
-          "(blur)": "onBlur",
-          mRef: mRef("ref"),
-      }),
+      node("input", Object.assign(Object.assign({ "[type]": "type", "[name]": "name", "[value]": "value", "[checked]": "checked", "[class]": "_inputClass", "[style]": "style", "[placeholder]": "placeholder", "[required]": "required", "[readonly]": "readonly", "[id]": "id", 
+          // "(keydown)": "onKeyDown",
+          "(input)": "onInput" }, mExtend("extendField")), mRef("ref"))),
       node("span", { mIf: mIf("hasLabelBeside") }, "{label}"),
   ]);
 
@@ -4110,6 +4096,7 @@
   class FieldSelectComponent extends MintScope {
       constructor() {
           super();
+          this.class = "";
           this.style = "";
           this.options = [];
           this.onInput = null;
@@ -4170,8 +4157,9 @@
   class FieldTextareaComponent extends MintScope {
       constructor() {
           super();
-          this.resize = false;
+          this.class = "";
           this.style = "";
+          this.resize = false;
           this.onInput = null;
           this.hasLabel = new Resolver(function () {
               return !!this.label;
@@ -4186,17 +4174,7 @@
   }
   const FieldTextarea = component("label", FieldTextareaComponent, { class: "{labelClass} {isRequired}" }, [
       node("span", { mIf: mIf("hasLabel") }, "{label}"),
-      node("textarea", {
-          "[name]": "name",
-          "[value]": "value",
-          "[class]": "class",
-          "[placeholder]": "placeholder",
-          "[style]": "getStyles",
-          "[readonly]": "getReadonly",
-          "[id]": "id",
-          "(input)": "onInput",
-          mRef: mRef("ref"),
-      }),
+      node("textarea", Object.assign(Object.assign({ "[name]": "name", "[value]": "value", "[class]": "class", "[placeholder]": "placeholder", "[style]": "getStyles", "[readonly]": "getReadonly", "[id]": "id", "(input)": "onInput" }, mExtend("extendField")), { mRef: mRef("ref") })),
   ]);
 
   const passProps = {
@@ -4215,10 +4193,11 @@
       "[required]": "required",
       "[readonly]": "readonly",
       "[id]": "id",
-      "[onKeyDown]": "onKeyDown",
+      // "[onKeyDown]": "onKeyDown",
       "[onInput]": "onInput",
-      "[onFocus]": "onFocus",
-      "[onBlur]": "onBlur",
+      // "[onFocus]": "onFocus",
+      // "[onBlur]": "onBlur",
+      "[extendField]": "extendField",
       "[ref]": "ref",
   };
   class FieldComponent extends MintScope {
@@ -4231,7 +4210,8 @@
           this.onInput = null;
           this.onFocus = null;
           this.onBlur = null;
-          this.extend = {};
+          this.extendScope = {};
+          this.extendField = {};
           this.ref = null;
           this.isInput = new Resolver(function () {
               const inValidTypes = [
@@ -4261,24 +4241,13 @@
       }
   }
   const Field = component("<>", FieldComponent, { "[class]": "wrapperClasses" }, [
-      node(FieldInput, Object.assign({ mIf: mIf("isInput"), mExtend: mExtend("extend") }, passProps)),
-      node(FieldCheckbox, Object.assign({ mIf: mIf("isCheckbox"), mExtend: mExtend("extend") }, passProps)),
-      node(FieldRadio, Object.assign({ mIf: mIf("isRadio"), mExtend: mExtend("extend") }, passProps)),
-      node(FieldFieldset, Object.assign(Object.assign({ mIf: mIf("isFieldSet"), mExtend: mExtend("extend") }, passProps), { "[options]": "options" })),
-      node(FieldTextarea, Object.assign(Object.assign({ mIf: mIf("isTextarea"), mExtend: mExtend("extend") }, passProps), { "[resize]": "resize" })),
-      node(FieldSelect, Object.assign(Object.assign({ mIf: mIf("isSelect"), mExtend: mExtend("extend") }, passProps), { "[options]": "options" })),
+      node(FieldInput, Object.assign(Object.assign({ mIf: mIf("isInput") }, mExtend("extendScope")), passProps)),
+      node(FieldCheckbox, Object.assign(Object.assign({ mIf: mIf("isCheckbox") }, mExtend("extendScope")), passProps)),
+      node(FieldRadio, Object.assign(Object.assign({ mIf: mIf("isRadio") }, mExtend("extendScope")), passProps)),
+      node(FieldFieldset, Object.assign(Object.assign(Object.assign({ mIf: mIf("isFieldSet") }, mExtend("extendScope")), passProps), { "[options]": "options" })),
+      node(FieldTextarea, Object.assign(Object.assign(Object.assign({ mIf: mIf("isTextarea") }, mExtend("extendScope")), passProps), { "[resize]": "resize" })),
+      node(FieldSelect, Object.assign(Object.assign(Object.assign({ mIf: mIf("isSelect") }, mExtend("extendScope")), passProps), { "[options]": "options" })),
   ]);
-
-  const modalTime = 500;
-
-  const closeModal = (target, prop) => {
-      target[prop] = "open closing";
-      externalRefresh(target);
-      setTimeout(() => {
-          target[prop] = "";
-          externalRefresh(target);
-      }, modalTime);
-  };
 
   class ModalComponent extends MintScope {
       constructor() {
@@ -4286,25 +4255,31 @@
           this.state = "";
           this.theme = "smoke";
           this.class = "";
+          this.style = "";
           this.hasTitle = new Resolver(function () {
               return this.title !== undefined;
           });
           this.clickOnBackground = function () {
-              if (this.closeOnBackgroundClick !== true)
-                  return;
-              if (this._store instanceof Store &&
-                  typeof this.storeTarget === "string") {
-                  closeModal(this._store, this.storeTarget);
+              if (this.closeOnBackgroundClick instanceof Function) {
+                  this.closeOnBackgroundClick();
               }
-              else {
-                  closeModal(this, "state");
+              // if (!(this.closeOnBackgroundClick instanceof Function)) return;
+              // if (this._store instanceof Store && typeof this.storeTarget === "string") {
+              //   closeModal(this._store, this.storeTarget);
+              // } else {
+              //   closeModal(this, "state");
+              // }
+          };
+          this.clickOnContent = function (event) {
+              if (this.closeOnBackgroundClick instanceof Function) {
+                  event.stopPropagation();
               }
           };
       }
   }
-  component("article", ModalComponent, { class: "modal {state}", "(click)": "clickOnBackground" }, node("div", { class: "modal__content {class}" }, [
+  component("article", ModalComponent, { class: "modal {state}", "(click)": "clickOnBackground" }, node("div", { class: "modal__content {class}", "[style]": "style", "(click)": "clickOnContent" }, [
       node("header", { mIf: mIf("hasTitle"), class: "modal__header {theme}" }, node("h2", null, "{title}")),
-      "_children",
+      "_children"
   ]));
 
   const exact = (target, hash) => {
@@ -4685,7 +4660,7 @@
           this.tags = new Resolver(() => manageStore.tags);
           this.tagInputRef = new UpwardRef(null);
           this.tagsValue = new Resolver(() => manageStore.tagsValue);
-          this.setTabsValue = (_, node) => {
+          this.setTagsValue = (_, node) => {
               manageStore.tagsValue = node.value;
           };
           this.addTab = function (event) {
@@ -4712,9 +4687,9 @@
   }, [
       div({ class: "relative" }, [
           node(Field, {
-              label: "Tabs",
+              label: "Tags",
               "[value]": "tagsValue",
-              "[onInput]": "setTabsValue",
+              "[onInput]": "setTagsValue",
               class: "padding-right-large",
               "[ref]": "tagInputRef",
           }),
@@ -5887,10 +5862,7 @@
       return output;
   };
 
-  const tabs = [
-      new Tab("By title", () => node(SearchByTitle)),
-      new Tab("By Tag", () => node(SearchByTag)),
-  ];
+  const tabs = [new Tab("By title", () => node(SearchByTitle)), new Tab("By Tag", () => node(SearchByTag))];
   const update = (_, element) => {
       searchStore.value = element.value;
   };
@@ -5928,7 +5900,7 @@
               tagSearchResults: [],
               formElementRef: null,
               searchRun: false,
-              includeMessage: false,
+              includeMessage: true,
               tabs,
               currentTab: tabs[0],
               currentTitle: new Resolver(() => {
@@ -5941,7 +5913,7 @@
                   return searchStore.searchRun && searchStore.results.length === 0;
               }),
               showNoTabItemFound: new Resolver(() => {
-                  return (searchStore.searchRun && searchStore.tagSearchResults.length === 0);
+                  return searchStore.searchRun && searchStore.tagSearchResults.length === 0;
               }),
               fromMessageClass: new Resolver(function () {
                   return this.isOnTitle ? "" : "border-left-blueberry";

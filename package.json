@@ -1,6 +1,6 @@
 {
   "name": "oregano",
-  "version": "5.0.3",
+  "version": "5.0.4",
   "description": "",
   "main": "./electron/index.js",
   "scripts": {
@@ -18,7 +18,7 @@
   "author": "",
   "license": "ISC",
   "peerDependencies": {
-    "mint": "file:../../Mint3",
+    "mint": "file:../../Mint",
     "oregano-core": "file:../Oregano-Core"
   },
   "dependencies": {
